@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0F1B2D">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg">
+<title>Radar de Golpes</title>
+<style>
+:root{--bg:#F4F6F8;--card:#fff;--ink:#14213D;--mute:#5B6678;--line:#DDE2E8;--brand:#0F1B2D;--teal:#0E8A7D;
+--bad:#B3261E;--badbg:#FDE8E6;--warn:#8A5A00;--warnbg:#FFF1CF;--ok:#14663F;--okbg:#DDF1E4;--none:#44506A;--nonebg:#E8ECF2}
+@media(prefers-color-scheme:dark){:root{--bg:#0B1220;--card:#131D31;--ink:#E8EDF5;--mute:#9AA6BA;--line:#25324B;--brand:#0A1322;--teal:#2EC4B6;
+--bad:#FF8A80;--badbg:#3A1A1A;--warn:#FFD166;--warnbg:#3A2E10;--ok:#7BE0A6;--okbg:#10301F;--none:#B7C2D6;--nonebg:#1C2740}}
+*{box-sizing:border-box}html,body{margin:0}
+body{font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);padding-bottom:40px}
+header{background:var(--brand);color:#fff;padding:calc(18px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-left,0px)) 18px max(16px,env(safe-area-inset-right,0px))}
+.w{max-width:560px;margin:0 auto}
+header h1{margin:0;font-size:22px;letter-spacing:.01em}header p{margin:4px 0 0;color:#B8C4D8;font-size:14px}
+main{padding:16px max(16px,env(safe-area-inset-left,0px)) 0 max(16px,env(safe-area-inset-right,0px))}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:14px}
+label{font-size:13px;font-weight:600;color:var(--mute);display:block;margin-bottom:6px}
+textarea{width:100%;min-height:110px;border:1.5px solid var(--line);border-radius:10px;padding:12px;font:inherit;background:var(--bg);color:var(--ink);resize:vertical}
+textarea:focus,button:focus-visible,a:focus-visible{outline:3px solid var(--teal);outline-offset:2px}
+.row{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+button,.btn{font:inherit;font-weight:600;border:0;border-radius:10px;min-height:48px;padding:0 18px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;text-decoration:none}
+.pri{background:var(--teal);color:#06231F;flex:1}.sec{background:var(--bg);color:var(--ink);border:1.5px solid var(--line)}
+.v{border-radius:12px;padding:16px;margin-bottom:14px}
+.v h2{margin:0 0 4px;font-size:22px}.v p{margin:0}
+.bad{background:var(--badbg);color:var(--bad)}.warn{background:var(--warnbg);color:var(--warn)}.ok{background:var(--okbg);color:var(--ok)}.none{background:var(--nonebg);color:var(--none)}
+ul{margin:8px 0 0;padding-left:20px}li{margin:3px 0}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+.chip{font-size:12px;font-weight:600;padding:3px 10px;border-radius:12px;background:var(--bg);border:1px solid var(--line);color:var(--mute)}
+.stat{display:flex;gap:10px}.stat div{flex:1;background:var(--bg);border-radius:10px;padding:10px;text-align:center}
+.stat b{display:block;font-size:24px;font-variant-numeric:tabular-nums}.stat span{font-size:12px;color:var(--mute)}
+.alert{border:2px dashed var(--bad);border-radius:12px;padding:14px;margin-top:10px;background:var(--card);white-space:pre-wrap}
+small,.note{color:var(--mute);font-size:13px}
+h3{margin:0 0 8px;font-size:15px}
+.hist{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-top:1px solid var(--line);font-size:14px}
+.hist:first-of-type{border-top:0}.hist span:first-child{overflow-wrap:anywhere;min-width:0}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<header><div class="w"><h1>Radar de Golpes</h1><p>Cole o que recebeu. Veja o que dizem os sinais e as denúncias.</p></div></header>
+<main><div class="w">
+<div class="card">
+<label for="inp">Mensagem, link, telefone, chave Pix ou CNPJ</label>
+<textarea id="inp" placeholder="Ex.: Seu CPF foi bloqueado. Regularize em bit.ly/regulariza-cpf hoje"></textarea>
+<div class="row"><button class="pri" id="go">Verificar</button><button class="sec" id="ex">Usar exemplo</button></div>
+<p class="note" style="margin:10px 0 0">O texto fica só no seu aparelho. Para as denúncias, guardamos apenas um código da chave (link, telefone, Pix ou CNPJ).</p>
+</div>
+
+<section id="res" hidden>
+<div id="verd" class="v"></div>
+<div class="card"><h3>Denúncias para esta chave</h3>
+<div class="chips" id="chips"></div>
+<div class="stat"><div><b id="nCons">0</b><span>consultas</span></div><div><b id="nDen">0</b><span>denúncias</span></div></div>
+<p class="note" id="scope" style="margin:10px 0 0"></p>
+<div class="row"><button class="sec" id="yes">Foi golpe</button><button class="sec" id="no">Não foi golpe</button></div>
+</div>
+<div class="card"><h3>Avisar família e amigos</h3>
+<div class="alert" id="alertTxt"></div>
+<div class="row"><a class="btn pri" id="wa" target="_blank" rel="noopener">Enviar no WhatsApp</a><button class="sec" id="cp">Copiar</button></div>
+</div>
+</section>
+
+<div class="card" id="histC" hidden><h3>Suas consultas recentes</h3><div id="hist"></div></div>
+<p class="note">Aviso: o Radar mostra sinais e relatos de pessoas. Não é prova nem decisão final. Na dúvida, ligue para a empresa pelo número oficial e nunca faça Pix para liberar prêmio, crédito ou taxa.</p>
+</div></main>
+
+<script>
+const $=id=>document.getElementById(id);
+const store={get(k,d){try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const SHORT=['bit.ly','tinyurl.com','t.co','cutt.ly','is.gd','rb.gy','shorturl.at','goo.gl','ow.ly','wa.me'];
+const BADTLD=['xyz','top','click','shop','online','site','icu','cfd','vip','buzz','live','link','rest'];
+const BRANDS={'gov.br':['gov','receita','inss','detran','serasa','correios','sus'],'correios.com.br':['correios'],'serasa.com.br':['serasa'],
+'nubank.com.br':['nubank'],'itau.com.br':['itau','itaú'],'bradesco.com.br':['bradesco'],'caixa.gov.br':['caixa'],'mercadolivre.com.br':['mercadolivre','mercado-livre'],'bb.com.br':['bancodobrasil']};
+const WORDS=[[/urgente|hoje|[úu]ltimo dia|imediat|em at[eé] \d+ ?h|prazo/i,'Cria urgência'],[/bloquead|suspens|cancelad|irregular|pend[eê]nc/i,'Ameaça de bloqueio ou pendência'],
+[/pr[eê]mio|sorteio|ganhou|b[oô]nus|restitui|reembolso|dinheiro esquecido/i,'Promete prêmio ou dinheiro'],[/taxa|tarifa|dep[oó]sito|pague|pix/i,'Pede pagamento ou Pix'],
+[/senha|c[oó]digo|token|cvv|cart[aã]o/i,'Pede senha, código ou dados do cartão'],[/oi m[aã]e|oi pai|mudei de n[uú]mero|novo n[uú]mero/i,'Parece golpe do "novo número"'],[/clique|acesse|link|regulariz/i,'Pede para clicar em link']];
+function sha(s){const e=new TextEncoder().encode(s);
+ if(window.crypto&&crypto.subtle)return crypto.subtle.digest('SHA-256',e).then(b=>[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('').slice(0,24));
+ let h=5381;for(const c of s)h=((h<<5)+h+c.charCodeAt(0))|0;return Promise.resolve('x'+(h>>>0).toString(16))}
+function extract(t){
+ const url=t.match(/(?:https?:\/\/)?(?:[a-z0-9-]+\.)+[a-z]{2,}(?:\/[^\s]*)?/i);
+ const cnpj=t.replace(/\s/g,'').match(/\d{2}\.?\d{3}\.?\d{3}\/?\d{4}-?\d{2}/);
+ const phone=t.match(/(?:\+?55\s?)?\(?\d{2}\)?\s?9?\d{4}[-\s]?\d{4}/);
+ const email=t.match(/[\w.+-]+@[\w-]+\.[\w.]+/);
+ if(url&&!email)return{tipo:'link',valor:url[0].toLowerCase().replace(/^https?:\/\//,'').replace(/^www\./,'').split(/[\/?#]/)[0],full:url[0]};
+ if(cnpj)return{tipo:'cnpj',valor:cnpj[0].replace(/\D/g,'')};
+ if(email&&!/\s/.test(t.trim()))return{tipo:'pix',valor:email[0].toLowerCase()};
+ if(phone)return{tipo:'telefone',valor:phone[0].replace(/\D/g,'').replace(/^55/,'')};
+ return{tipo:'texto',valor:t.toLowerCase().replace(/\d+/g,'#').replace(/\s+/g,' ').trim().slice(0,160)}}
+function analyze(t,k){const sig=[];
+ for(const [re,l] of WORDS) if(re.test(t)) sig.push([l,1]);
+ if(k.tipo==='link'){const d=k.valor;
+  if(SHORT.includes(d))sig.push(['Link encurtado esconde o destino',2]);
+  if(/^\d+\.\d+\.\d+\.\d+/.test(d))sig.push(['Endereço é um número (IP)',3]);
+  if(d.includes('xn--'))sig.push(['Endereço usa caracteres disfarçados',3]);
+  const tld=d.split('.').pop();if(BADTLD.includes(tld))sig.push(['Final de endereço .'+tld+' é comum em golpes',1]);
+  if((d.match(/-/g)||[]).length>=2)sig.push(['Muitos hífens no endereço',1]);
+  if(/^http:\/\//i.test(k.full))sig.push(['Sem cadeado (http)',1]);
+  for(const [off,keys] of Object.entries(BRANDS)){const hit=keys.find(x=>d.includes(x));
+   if(hit&&!(d===off||d.endsWith('.'+off)||(off==='gov.br'&&d.endsWith('.gov.br'))))sig.push(['Usa o nome "'+hit+'" mas não é o site oficial ('+off+')',3]);}}
+ if(k.tipo==='telefone'&&/^(\d)\1{7,}$/.test(k.valor.slice(2)))sig.push(['Número com dígitos repetidos',1]);
+ return sig}
+const level=s=>{const p=s.reduce((a,x)=>a+x[1],0);return p>=5?'bad':p>=3?'warn':p>=1?'warn':'none'};
+let cur=null;
+const LS='radar.local.v1';
+function mine(){return store.get(LS,{})}
+async function run(){
+ const t=$('inp').value.trim();if(!t)return;
+ const k=extract(t);const h=await sha(k.tipo+':'+k.valor);
+ const sig=analyze(t,k);const db=mine();const rec=db[h]||{c:0,d:0,n:0,mine:null,tipo:k.tipo};
+ rec.c++;db[h]=rec;store.set(LS,db);
+ cur={h,k,sig,t};
+ const lv=rec.d>=3?'bad':level(sig);
+ const V={bad:['Golpe provável','Vários sinais ou denúncias batem com golpe conhecido.'],warn:['Suspeito','Há sinais de alerta. Confirme por um canal oficial antes de agir.'],none:['Sem sinais','Não achei sinais nem denúncias. Isso não garante que seja seguro.']}[lv];
+ $('verd').className='v '+lv;
+ $('verd').innerHTML='<h2></h2><p></p><ul></ul>';
+ $('verd').querySelector('h2').textContent=V[0];$('verd').querySelector('p').textContent=V[1];
+ const ul=$('verd').querySelector('ul');
+ sig.forEach(s=>{const li=document.createElement('li');li.textContent=s[0];ul.appendChild(li)});
+ if(rec.d)ul.insertAdjacentHTML('beforeend','<li>'+rec.d+' denúncia(s) neste aparelho</li>');
+ $('chips').innerHTML='';[['Tipo: '+k.tipo],[k.tipo==='texto'?'Texto comparado sem números':k.valor.length>26?k.valor.slice(0,24)+'…':k.valor]].forEach(c=>{const s=document.createElement('span');s.className='chip';s.textContent=c[0];$('chips').appendChild(s)});
+ $('nCons').textContent=rec.c;$('nDen').textContent=rec.d;
+ $('scope').textContent='Contagem só deste aparelho. A contagem de todos os usuários entra quando o servidor estiver ligado.';
+ mark(rec);
+ const alert='⚠️ Cuidado com golpe\n'+(k.tipo==='link'?'Link: '+k.valor:k.tipo==='texto'?'Mensagem parecida com esta:\n"'+t.slice(0,140)+'"':k.tipo+': '+k.valor)+'\n'+(sig.slice(0,3).map(s=>'• '+s[0]).join('\n'))+'\nNão clique, não pague e não passe códigos. Confirme pelo canal oficial.';
+ $('alertTxt').textContent=alert;$('wa').href='https://wa.me/?text='+encodeURIComponent(alert);
+ $('res').hidden=false;$('res').scrollIntoView({behavior:'smooth',block:'start'});
+ hist(t,V[0],lv)}
+function mark(rec){$('yes').style.borderColor=rec.mine==='y'?'var(--bad)':'';$('no').style.borderColor=rec.mine==='n'?'var(--ok)':'';
+ $('yes').textContent=rec.mine==='y'?'Denunciado ✓':'Foi golpe';$('no').textContent=rec.mine==='n'?'Marcado como legítimo ✓':'Não foi golpe'}
+function vote(v){if(!cur)return;const db=mine();const r=db[cur.h];if(r.mine===v)return;
+ if(r.mine==='y')r.d--;if(v==='y')r.d++;r.mine=v;store.set(LS,db);$('nDen').textContent=r.d;mark(r)}
+function hist(t,v,lv){const H=store.get('radar.hist.v1',[]);H.unshift({t:t.slice(0,60),v,lv});store.set('radar.hist.v1',H.slice(0,8));drawHist()}
+function drawHist(){const H=store.get('radar.hist.v1',[]);$('histC').hidden=!H.length;$('hist').innerHTML='';
+ H.forEach(x=>{const d=document.createElement('div');d.className='hist';const a=document.createElement('span');a.textContent=x.t;const b=document.createElement('span');b.textContent=x.v;b.style.fontWeight=600;b.style.color=x.lv==='bad'?'var(--bad)':x.lv==='warn'?'var(--warn)':'var(--none)';d.append(a,b);$('hist').appendChild(d)})}
+$('go').onclick=run;
+$('ex').onclick=()=>{$('inp').value='URGENTE: seu CPF foi bloqueado. Regularize hoje em http://receita-federal-regulariza.top/cpf e pague a taxa via Pix para liberar.'};
+$('yes').onclick=()=>vote('y');$('no').onclick=()=>vote('n');
+$('cp').onclick=async()=>{try{await navigator.clipboard.writeText($('alertTxt').textContent);$('cp').textContent='Copiado ✓'}catch(e){const r=document.createRange();r.selectNodeContents($('alertTxt'));getSelection().removeAllRanges();getSelection().addRange(r)}};
+drawHist();
+if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script>
+</body>
+</html>
