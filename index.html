@@ -38,11 +38,16 @@ small,.note{color:var(--mute);font-size:13px}
 h3{margin:0 0 8px;font-size:15px}
 .hist{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-top:1px solid var(--line);font-size:14px}
 .hist:first-of-type{border-top:0}.hist span:first-child{overflow-wrap:anywhere;min-width:0}
+.bal{display:inline-flex;align-items:center;gap:6px;margin-top:10px;background:rgba(255,255,255,.12);border-radius:16px;padding:4px 12px;font-size:14px;font-weight:600}
+.bal b{font-variant-numeric:tabular-nums;font-size:16px}
+.ovl{position:fixed;inset:0;background:rgba(5,10,20,.92);z-index:50;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;color:#fff;padding:24px;text-align:center}
+.ovl .bar{width:min(320px,80%);height:8px;background:#ffffff33;border-radius:4px;overflow:hidden}.ovl .bar i{display:block;height:100%;width:0;background:var(--teal);transition:width 1s linear}
+.ovl .fake{width:min(320px,80%);aspect-ratio:16/9;border-radius:12px;background:linear-gradient(135deg,#1c2b4a,#0e8a7d);display:flex;align-items:center;justify-content:center;font-size:14px;padding:12px}
 [hidden]{display:none!important}
 </style>
 </head>
 <body>
-<header><div class="w"><h1>Radar de Golpes</h1><p>Cole o que recebeu. Veja o que dizem os sinais e as denúncias.</p></div></header>
+<header><div class="w"><h1>Radar de Golpes</h1><p>Cole o que recebeu. Veja o que dizem os sinais e as denúncias.</p><div class="bal">Créditos <b id="saldo">0</b></div></div></header>
 <main><div class="w">
 <div class="card">
 <label for="inp">Mensagem, link, telefone, chave Pix ou CNPJ</label>
@@ -51,6 +56,11 @@ h3{margin:0 0 8px;font-size:15px}
 <p class="note" style="margin:10px 0 0">O texto fica só no seu aparelho. Para as denúncias, guardamos apenas um código da chave (link, telefone, Pix ou CNPJ).</p>
 </div>
 
+<div class="card" id="rw" hidden>
+<h3 id="rwT">Seus créditos acabaram</h3>
+<p class="note" id="rwP" style="margin:0 0 10px">Assista a um vídeo curto para ganhar 3 créditos. Os créditos não vencem.</p>
+<div class="row"><button class="pri" id="rwB">Assistir e ganhar 3 créditos</button></div>
+</div>
 <section id="res" hidden>
 <div id="verd" class="v"></div>
 <div class="card"><h3>Denúncias para esta chave</h3>
@@ -69,6 +79,11 @@ h3{margin:0 0 8px;font-size:15px}
 <p class="note">Aviso: o Radar mostra sinais e relatos de pessoas. Não é prova nem decisão final. Na dúvida, ligue para a empresa pelo número oficial e nunca faça Pix para liberar prêmio, crédito ou taxa.</p>
 </div></main>
 
+<div class="ovl" id="ovl" hidden role="dialog" aria-modal="true" aria-label="Vídeo patrocinado">
+<div class="fake">Espaço do vídeo patrocinado (modo teste)</div>
+<div class="bar"><i id="ovB"></i></div><div id="ovT" aria-live="polite">Aguarde</div>
+<button class="sec" id="ovX" hidden>Fechar</button>
+</div>
 <script>
 const $=id=>document.getElementById(id);
 const store={get(k,d){try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
@@ -106,11 +121,32 @@ function analyze(t,k){const sig=[];
  if(k.tipo==='telefone'&&/^(\d)\1{7,}$/.test(k.valor.slice(2)))sig.push(['Número com dígitos repetidos',1]);
  return sig}
 const level=s=>{const p=s.reduce((a,x)=>a+x[1],0);return p>=5?'bad':p>=3?'warn':p>=1?'warn':'none'};
+/* Créditos: 1 verificação = 1 crédito. Novos usuários começam com 5. +3 grátis por semana. 1 vídeo = +3 (máx. 2 por sessão). Denunciar = +1 (uma vez por chave). */
+const CK='radar.credits.v1',START=5,WEEKLY=3,PER_AD=3,AD_MAX=2,AD_SECONDS=5/* trocar para ~30 com anúncio real */;
+let adsNow=0;
+const weekId=()=>Math.floor((Date.now()-259200000)/604800000);
+function cred(){let c=store.get(CK,null);if(!c)c={s:START,w:weekId()};
+ if(c.w!==weekId()){c.s+=WEEKLY;c.w=weekId()}store.set(CK,c);return c}
+function addCred(n){const c=cred();c.s=Math.max(0,c.s+n);store.set(CK,c);drawBal()}
+function drawBal(){$('saldo').textContent=cred().s}
+/* Troque por AdMob (Capacitor) quando empacotar como app: deve resolver true só se o vídeo foi concluído. */
+function showRewardedAd(){return new Promise(res=>{const o=$('ovl'),b=$('ovB'),t=$('ovT'),x=$('ovX');let n=AD_SECONDS;
+ o.hidden=false;x.hidden=true;b.style.width='0';t.textContent='Faltam '+n+' s';
+ const iv=setInterval(()=>{n--;b.style.width=((AD_SECONDS-n)/AD_SECONDS*100)+'%';t.textContent=n>0?'Faltam '+n+' s':'Pronto!';
+  if(n<=0){clearInterval(iv);x.hidden=false;x.textContent='Fechar e receber créditos';x.onclick=()=>{o.hidden=true;res(true)}}},1000);
+ b.style.width=(1/AD_SECONDS*100)+'%'})}
+function showReward(){const full=adsNow>=AD_MAX;$('rw').hidden=false;
+ $('rwT').textContent='Seus créditos acabaram';
+ $('rwP').textContent=full?'Você já assistiu '+AD_MAX+' vídeos nesta sessão. Volte mais tarde ou ganhe +1 crédito denunciando um golpe. Toda semana você recebe '+WEEKLY+' créditos grátis.':'Assista a um vídeo curto para ganhar '+PER_AD+' créditos. Os créditos não vencem.';
+ $('rwB').hidden=full;$('rw').scrollIntoView({behavior:'smooth',block:'start'})}
+$('rwB').onclick=async()=>{if(adsNow>=AD_MAX)return;const ok=await showRewardedAd();if(ok){adsNow++;addCred(PER_AD);$('rw').hidden=true}};
 let cur=null;
 const LS='radar.local.v1';
 function mine(){return store.get(LS,{})}
 async function run(){
  const t=$('inp').value.trim();if(!t)return;
+ if(cred().s<1){showReward();return}
+ addCred(-1);
  const k=extract(t);const h=await sha(k.tipo+':'+k.valor);
  const sig=analyze(t,k);const db=mine();const rec=db[h]||{c:0,d:0,n:0,mine:null,tipo:k.tipo};
  rec.c++;db[h]=rec;store.set(LS,db);
@@ -134,6 +170,7 @@ async function run(){
 function mark(rec){$('yes').style.borderColor=rec.mine==='y'?'var(--bad)':'';$('no').style.borderColor=rec.mine==='n'?'var(--ok)':'';
  $('yes').textContent=rec.mine==='y'?'Denunciado ✓':'Foi golpe';$('no').textContent=rec.mine==='n'?'Marcado como legítimo ✓':'Não foi golpe'}
 function vote(v){if(!cur)return;const db=mine();const r=db[cur.h];if(r.mine===v)return;
+ if(v==='y'&&!r.paid){r.paid=1;addCred(1)}
  if(r.mine==='y')r.d--;if(v==='y')r.d++;r.mine=v;store.set(LS,db);$('nDen').textContent=r.d;mark(r)}
 function hist(t,v,lv){const H=store.get('radar.hist.v1',[]);H.unshift({t:t.slice(0,60),v,lv});store.set('radar.hist.v1',H.slice(0,8));drawHist()}
 function drawHist(){const H=store.get('radar.hist.v1',[]);$('histC').hidden=!H.length;$('hist').innerHTML='';
@@ -142,7 +179,7 @@ $('go').onclick=run;
 $('ex').onclick=()=>{$('inp').value='URGENTE: seu CPF foi bloqueado. Regularize hoje em http://receita-federal-regulariza.top/cpf e pague a taxa via Pix para liberar.'};
 $('yes').onclick=()=>vote('y');$('no').onclick=()=>vote('n');
 $('cp').onclick=async()=>{try{await navigator.clipboard.writeText($('alertTxt').textContent);$('cp').textContent='Copiado ✓'}catch(e){const r=document.createRange();r.selectNodeContents($('alertTxt'));getSelection().removeAllRanges();getSelection().addRange(r)}};
-drawHist();
+drawHist();drawBal();
 if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').catch(()=>{});
 </script>
 </body>
