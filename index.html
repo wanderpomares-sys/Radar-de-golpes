@@ -7,6 +7,12 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg">
 <title>Radar de Golpes</title>
+<meta name="description" content="Recebeu mensagem, link ou Pix suspeito? Cole aqui e veja os sinais de golpe antes de clicar ou pagar.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Radar de Golpes">
+<meta property="og:description" content="Recebeu mensagem, link ou Pix suspeito? Cole aqui e veja os sinais de golpe antes de clicar ou pagar.">
+<meta property="og:url" content="https://wanderpomares-sys.github.io/Radar-de-golpes/">
+<meta property="og:locale" content="pt_BR">
 <style>
 :root{--bg:#F4F6F8;--card:#fff;--ink:#14213D;--mute:#5B6678;--line:#DDE2E8;--brand:#0F1B2D;--teal:#0E8A7D;
 --bad:#B3261E;--badbg:#FDE8E6;--warn:#8A5A00;--warnbg:#FFF1CF;--ok:#14663F;--okbg:#DDF1E4;--none:#44506A;--nonebg:#E8ECF2}
@@ -81,6 +87,9 @@ h3{margin:0 0 8px;font-size:15px}
 <div class="ad" data-ad="meio" aria-label="Publicidade"><small>Publicidade</small><span>Espaço de anúncio (modo teste)</span></div>
 <div class="card" id="histC" hidden><h3>Suas consultas recentes</h3><div id="hist"></div></div>
 <div class="ad" data-ad="rodape" aria-label="Publicidade"><small>Publicidade</small><span>Espaço de anúncio (modo teste)</span></div>
+<div class="card"><h3>Conhece alguém que recebe esse tipo de mensagem?</h3>
+<p class="note" style="margin:0 0 10px">Mande o Radar para a família. Quem se protege primeiro costuma ser quem recebe o aviso de alguém de confiança.</p>
+<div class="row"><a class="btn pri" id="inv" target="_blank" rel="noopener">Indicar pelo WhatsApp</a></div></div>
 <p class="note">Aviso: o Radar mostra sinais e relatos de pessoas. Não é prova nem decisão final. Na dúvida, ligue para a empresa pelo número oficial e nunca faça Pix para liberar prêmio, crédito ou taxa.</p>
 </div></main>
 
@@ -192,6 +201,7 @@ $('ex').onclick=()=>{$('inp').value='URGENTE: seu CPF foi bloqueado. Regularize 
 $('yes').onclick=()=>vote('y');$('no').onclick=()=>vote('n');
 $('cp').onclick=async()=>{try{await navigator.clipboard.writeText($('alertTxt').textContent);$('cp').textContent='Copiado ✓'}catch(e){const r=document.createRange();r.selectNodeContents($('alertTxt'));getSelection().removeAllRanges();getSelection().addRange(r)}};
 drawHist();drawBal();
+$('inv').href='https://wa.me/?text='+encodeURIComponent('Recebeu mensagem, link ou Pix suspeito? Use o Radar de Golpes para ver os sinais antes de clicar ou pagar: https://wanderpomares-sys.github.io/Radar-de-golpes/');
 if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').catch(()=>{});
 </script>
 </body>
