@@ -43,6 +43,8 @@ h3{margin:0 0 8px;font-size:15px}
 .ovl{position:fixed;inset:0;background:rgba(5,10,20,.92);z-index:50;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;color:#fff;padding:24px;text-align:center}
 .ovl .bar{width:min(320px,80%);height:8px;background:#ffffff33;border-radius:4px;overflow:hidden}.ovl .bar i{display:block;height:100%;width:0;background:var(--teal);transition:width 1s linear}
 .ovl .fake{width:min(320px,80%);aspect-ratio:16/9;border-radius:12px;background:linear-gradient(135deg,#1c2b4a,#0e8a7d);display:flex;align-items:center;justify-content:center;font-size:14px;padding:12px}
+.ad{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:60px;margin:0 0 14px;border:1px dashed var(--line);border-radius:10px;color:var(--mute);font-size:12px;background:var(--card)}
+.ad small{font-size:10px;letter-spacing:.08em;text-transform:uppercase}
 [hidden]{display:none!important}
 </style>
 </head>
@@ -76,7 +78,9 @@ h3{margin:0 0 8px;font-size:15px}
 </div>
 </section>
 
+<div class="ad" data-ad="meio" aria-label="Publicidade"><small>Publicidade</small><span>Espaço de anúncio (modo teste)</span></div>
 <div class="card" id="histC" hidden><h3>Suas consultas recentes</h3><div id="hist"></div></div>
+<div class="ad" data-ad="rodape" aria-label="Publicidade"><small>Publicidade</small><span>Espaço de anúncio (modo teste)</span></div>
 <p class="note">Aviso: o Radar mostra sinais e relatos de pessoas. Não é prova nem decisão final. Na dúvida, ligue para a empresa pelo número oficial e nunca faça Pix para liberar prêmio, crédito ou taxa.</p>
 </div></main>
 
@@ -133,7 +137,9 @@ const PK='radar.premium.v1';
 const isPrem=()=>!!store.get(PK,false);
 /* Troque por Google Play Billing (Capacitor) e valide a assinatura no servidor. Aqui é só modo teste. */
 function subscribe(p){store.set(PK,p);drawBal();$('rw').hidden=true}
-function drawBal(){$('balW').innerHTML=isPrem()?'Plano '+store.get(PK,'')+' ativo':'Créditos <b id="saldo">'+cred().s+'</b>'}
+/* Anúncios só fora do resultado. Nunca dentro do veredito. Trocar pelo bloco do AdMob/AdSense. */
+function drawAds(){document.querySelectorAll('.ad').forEach(a=>a.hidden=isPrem())}
+function drawBal(){drawAds();$('balW').innerHTML=isPrem()?'Plano '+store.get(PK,'')+' ativo':'Créditos <b id="saldo">'+cred().s+'</b>'}
 /* Troque por AdMob (Capacitor) quando empacotar como app: deve resolver true só se o vídeo foi concluído. */
 function showRewardedAd(){return new Promise(res=>{const o=$('ovl'),b=$('ovB'),t=$('ovT'),x=$('ovX');let n=AD_SECONDS;
  o.hidden=false;x.hidden=true;b.style.width='0';t.textContent='Faltam '+n+' s';
