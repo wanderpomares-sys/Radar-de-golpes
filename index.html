@@ -59,8 +59,8 @@ h3{margin:0 0 8px;font-size:15px}
 <div class="card" id="rw" hidden>
 <h3 id="rwT">Seus créditos acabaram</h3>
 <p class="note" id="rwP" style="margin:0 0 10px">Assista a um vídeo curto para ganhar 3 créditos. Os créditos não vencem.</p>
-<div class="row"><button class="pri" id="rwB">Assistir e ganhar 3 créditos</button><button class="sec" id="sub">Assinar por R$ 2,99/mês</button></div>
-<p class="note" style="margin:10px 0 0">Assinatura: verificações ilimitadas e sem vídeos. Cancele quando quiser.</p>
+<div class="row"><button class="pri" id="rwB">Assistir e ganhar 3 créditos</button><button class="sec" id="sub">Mensal R$ 2,99</button><button class="sec" id="subA">Anual R$ 19,99 (R$ 1,67/mês)</button></div>
+<p class="note" style="margin:10px 0 0">Assinatura: verificações ilimitadas e sem vídeos. O plano anual sai 44% mais barato que 12 meses no mensal. Cancele quando quiser.</p>
 </div>
 <section id="res" hidden>
 <div id="verd" class="v"></div>
@@ -130,11 +130,10 @@ function cred(){let c=store.get(CK,null);if(!c)c={s:START,w:weekId()};
  if(c.w!==weekId()){c.s+=WEEKLY;c.w=weekId()}store.set(CK,c);return c}
 function addCred(n){if(isPrem())return;const c=cred();c.s=Math.max(0,c.s+n);store.set(CK,c);drawBal()}
 const PK='radar.premium.v1';
-const isPrem=()=>store.get(PK,false)===true;
+const isPrem=()=>!!store.get(PK,false);
 /* Troque por Google Play Billing (Capacitor) e valide a assinatura no servidor. Aqui é só modo teste. */
-function subscribe(){if(!confirm_()){return}store.set(PK,true);drawBal();$('rw').hidden=true}
-function confirm_(){return true}
-function drawBal(){$('balW').innerHTML=isPrem()?'Plano sem anúncios ativo':'Créditos <b id="saldo">'+cred().s+'</b>'}
+function subscribe(p){store.set(PK,p);drawBal();$('rw').hidden=true}
+function drawBal(){$('balW').innerHTML=isPrem()?'Plano '+store.get(PK,'')+' ativo':'Créditos <b id="saldo">'+cred().s+'</b>'}
 /* Troque por AdMob (Capacitor) quando empacotar como app: deve resolver true só se o vídeo foi concluído. */
 function showRewardedAd(){return new Promise(res=>{const o=$('ovl'),b=$('ovB'),t=$('ovT'),x=$('ovX');let n=AD_SECONDS;
  o.hidden=false;x.hidden=true;b.style.width='0';t.textContent='Faltam '+n+' s';
@@ -142,10 +141,10 @@ function showRewardedAd(){return new Promise(res=>{const o=$('ovl'),b=$('ovB'),t
   if(n<=0){clearInterval(iv);x.hidden=false;x.textContent='Fechar e receber créditos';x.onclick=()=>{o.hidden=true;res(true)}}},1000);
  b.style.width=(1/AD_SECONDS*100)+'%'})}
 function showReward(){const full=adsNow>=AD_MAX;$('rw').hidden=false;
- $('rwT').textContent='Seus créditos acabaram';$('sub').hidden=false;
+ $('rwT').textContent='Seus créditos acabaram';
  $('rwP').textContent=full?'Você já assistiu '+AD_MAX+' vídeos nesta sessão. Volte mais tarde ou ganhe +1 crédito denunciando um golpe. Toda semana você recebe '+WEEKLY+' créditos grátis.':'Assista a um vídeo curto para ganhar '+PER_AD+' créditos. Os créditos não vencem.';
  $('rwB').hidden=full;$('rw').scrollIntoView({behavior:'smooth',block:'start'})}
-$('sub').onclick=subscribe;
+$('sub').onclick=()=>subscribe('mensal');$('subA').onclick=()=>subscribe('anual');
 $('rwB').onclick=async()=>{if(adsNow>=AD_MAX)return;const ok=await showRewardedAd();if(ok){adsNow++;addCred(PER_AD);$('rw').hidden=true}};
 let cur=null;
 const LS='radar.local.v1';
