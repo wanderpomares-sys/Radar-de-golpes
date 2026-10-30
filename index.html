@@ -292,7 +292,10 @@ $('inv').href='https://wa.me/?text='+encodeURIComponent('Recebeu mensagem, link 
 /* Receber link direto do menu Compartilhar do celular (app instalado) */
 (function(){const q=new URLSearchParams(location.search);const sh=[q.get('title'),q.get('text'),q.get('url')].filter(Boolean).join(' ').trim();
  if(sh){$('inp').value=sh;history.replaceState(null,'',location.pathname);setTimeout(run,300)}})();
-if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').catch(()=>{});
+if('serviceWorker' in navigator&&location.protocol.startsWith('http')){
+ const had=!!navigator.serviceWorker.controller;let rl=false;
+ navigator.serviceWorker.addEventListener('controllerchange',()=>{if(had&&!rl){rl=true;location.reload()}});
+ navigator.serviceWorker.register('sw.js').catch(()=>{});}
 </script>
 </body>
 </html>
