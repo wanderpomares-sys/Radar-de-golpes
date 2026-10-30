@@ -1,5 +1,5 @@
 /* Sempre busca a versão mais nova na internet e só usa a cópia guardada quando está sem internet. */
-const C='radar-v20';
+const C='radar-v21';
 self.addEventListener('install',e=>{self.skipWaiting();e.waitUntil(caches.open(C).then(c=>c.addAll(['./','index.html','manifest.webmanifest','icon-192.png','icon-maskable-512.png','mascote.png','mascote-bravo.png','mascote-ok.png'])))});
 self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==C).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
 self.addEventListener('fetch',e=>{
