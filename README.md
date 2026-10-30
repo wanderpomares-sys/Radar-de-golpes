@@ -1,6 +1,6 @@
 # Radar de Golpes
 
-Página leve (PWA) para checar mensagem, link, telefone, Pix ou CNPJ suspeito.
+Página leve (PWA) para checar link de loja, anúncio, mensagem, telefone, Pix ou CNPJ suspeito antes de comprar ou pagar.
 
 ## O que faz hoje
 - Detecta sinais de golpe: link encurtado, finais de endereço comuns em golpes, marca imitada, urgência, pedido de Pix ou senha.

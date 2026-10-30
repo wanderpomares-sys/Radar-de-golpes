@@ -55,11 +55,11 @@ h3{margin:0 0 8px;font-size:15px}
 </style>
 </head>
 <body>
-<header><div class="w"><h1>Radar de Golpes</h1><p>Cole o que recebeu. Veja o que dizem os sinais e as denúncias.</p><div class="bal" id="balW">Créditos <b id="saldo">0</b></div></div></header>
+<header><div class="w"><h1>Radar de Golpes</h1><p>Antes de comprar ou pagar, cole o link da loja ou a mensagem. Veja os sinais de golpe.</p><div class="bal" id="balW">Créditos <b id="saldo">0</b></div></div></header>
 <main><div class="w">
 <div class="card">
 <label for="inp">Mensagem, link, telefone, chave Pix ou CNPJ</label>
-<textarea id="inp" placeholder="Ex.: Seu CPF foi bloqueado. Regularize em bit.ly/regulariza-cpf hoje"></textarea>
+<textarea id="inp" placeholder="Cole o link da loja, do anúncio ou da mensagem. Ex.: magalu-ofertas.shop/ps5"></textarea>
 <div class="row"><button class="pri" id="go">Verificar</button><button class="sec" id="ex">Usar exemplo</button></div>
 <p class="note" style="margin:10px 0 0">O texto fica só no seu aparelho. Para as denúncias, guardamos apenas um código da chave (link, telefone, Pix ou CNPJ).</p>
 </div>
@@ -103,9 +103,10 @@ const $=id=>document.getElementById(id);
 const store={get(k,d){try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
 const SHORT=['bit.ly','tinyurl.com','t.co','cutt.ly','is.gd','rb.gy','shorturl.at','goo.gl','ow.ly','wa.me'];
 const BADTLD=['xyz','top','click','shop','online','site','icu','cfd','vip','buzz','live','link','rest'];
-const BRANDS={'gov.br':['gov','receita','inss','detran','serasa','correios','sus'],'correios.com.br':['correios'],'serasa.com.br':['serasa'],
+const OFICIAIS=['magalu.com','amazon.com','shein.com.br','mercadolibre.com','mercadopago.com.br','aliexpress.us'];
+const BRANDS={'amazon.com.br':['amazon'],'magazineluiza.com.br':['magalu','magazineluiza'],'shopee.com.br':['shopee'],'americanas.com.br':['americanas'],'casasbahia.com.br':['casasbahia','casas-bahia'],'shein.com':['shein'],'kabum.com.br':['kabum'],'aliexpress.com':['aliexpress'],'netshoes.com.br':['netshoes'],'gov.br':['gov','receita','inss','detran','serasa','correios','sus'],'correios.com.br':['correios'],'serasa.com.br':['serasa'],
 'nubank.com.br':['nubank'],'itau.com.br':['itau','itaú'],'bradesco.com.br':['bradesco'],'caixa.gov.br':['caixa'],'mercadolivre.com.br':['mercadolivre','mercado-livre'],'bb.com.br':['bancodobrasil']};
-const WORDS=[[/urgente|hoje|[úu]ltimo dia|imediat|em at[eé] \d+ ?h|prazo/i,'Cria urgência'],[/bloquead|suspens|cancelad|irregular|pend[eê]nc/i,'Ameaça de bloqueio ou pendência'],
+const WORDS=[[/\b[5-9]\d ?% ?(off|de desconto)|desconto de [5-9]\d ?%|queima de estoque|liquida[cç][aã]o total/i,'Desconto exagerado'],[/frete gr[aá]tis/i,'Promete frete grátis'],[/[úu]ltimas? unidades|s[oó] hoje|acaba hoje|restam \d+/i,'Escassez falsa (últimas unidades, só hoje)'],[/pague (apenas |somente |s[oó] )?(no|via|por) pix|somente (no )?pix|s[oó] pix/i,'Só aceita Pix'],[/urgente|hoje|[úu]ltimo dia|imediat|em at[eé] \d+ ?h|prazo/i,'Cria urgência'],[/bloquead|suspens|cancelad|irregular|pend[eê]nc/i,'Ameaça de bloqueio ou pendência'],
 [/pr[eê]mio|sorteio|ganhou|b[oô]nus|restitui|reembolso|dinheiro esquecido/i,'Promete prêmio ou dinheiro'],[/taxa|tarifa|dep[oó]sito|pague|pix/i,'Pede pagamento ou Pix'],
 [/senha|c[oó]digo|token|cvv|cart[aã]o/i,'Pede senha, código ou dados do cartão'],[/oi m[aã]e|oi pai|mudei de n[uú]mero|novo n[uú]mero/i,'Parece golpe do "novo número"'],[/clique|acesse|link|regulariz/i,'Pede para clicar em link']];
 function sha(s){const e=new TextEncoder().encode(s);
@@ -128,10 +129,11 @@ function analyze(t,k){const sig=[];
   if(/^\d+\.\d+\.\d+\.\d+/.test(d))sig.push(['Endereço é um número (IP)',3]);
   if(d.includes('xn--'))sig.push(['Endereço usa caracteres disfarçados',3]);
   const tld=d.split('.').pop();if(BADTLD.includes(tld))sig.push(['Final de endereço .'+tld+' é comum em golpes',1]);
+  if(/oferta|promo|outlet|liquida|black|imperdivel|desconto/.test(d))sig.push(['Endereço de "oferta" ou "promoção", comum em loja falsa',2]);
   if((d.match(/-/g)||[]).length>=2)sig.push(['Muitos hífens no endereço',1]);
   if(/^http:\/\//i.test(k.full))sig.push(['Sem cadeado (http)',1]);
   for(const [off,keys] of Object.entries(BRANDS)){const hit=keys.find(x=>d.includes(x));
-   if(hit&&!(d===off||d.endsWith('.'+off)||(off==='gov.br'&&d.endsWith('.gov.br'))))sig.push(['Usa o nome "'+hit+'" mas não é o site oficial ('+off+')',3]);}}
+   if(hit&&!(d===off||d.endsWith('.'+off)||OFICIAIS.some(o=>d===o||d.endsWith('.'+o))||(off==='gov.br'&&d.endsWith('.gov.br'))))sig.push(['Usa o nome "'+hit+'" mas não é o site oficial ('+off+')',3]);}}
  if(k.tipo==='telefone'&&/^(\d)\1{7,}$/.test(k.valor.slice(2)))sig.push(['Número com dígitos repetidos',1]);
  return sig}
 const level=s=>{const p=s.reduce((a,x)=>a+x[1],0);return p>=5?'bad':p>=3?'warn':p>=1?'warn':'none'};
@@ -197,7 +199,7 @@ function hist(t,v,lv){const H=store.get('radar.hist.v1',[]);H.unshift({t:t.slice
 function drawHist(){const H=store.get('radar.hist.v1',[]);$('histC').hidden=!H.length;$('hist').innerHTML='';
  H.forEach(x=>{const d=document.createElement('div');d.className='hist';const a=document.createElement('span');a.textContent=x.t;const b=document.createElement('span');b.textContent=x.v;b.style.fontWeight=600;b.style.color=x.lv==='bad'?'var(--bad)':x.lv==='warn'?'var(--warn)':'var(--none)';d.append(a,b);$('hist').appendChild(d)})}
 $('go').onclick=run;
-$('ex').onclick=()=>{$('inp').value='URGENTE: seu CPF foi bloqueado. Regularize hoje em http://receita-federal-regulariza.top/cpf e pague a taxa via Pix para liberar.'};
+$('ex').onclick=()=>{$('inp').value='PS5 por R$ 1.299! Só hoje, últimas unidades, 80% off + frete grátis. Pague no Pix e leve: https://magalu-ofertas-oficial.shop/ps5'};
 $('yes').onclick=()=>vote('y');$('no').onclick=()=>vote('n');
 $('cp').onclick=async()=>{try{await navigator.clipboard.writeText($('alertTxt').textContent);$('cp').textContent='Copiado ✓'}catch(e){const r=document.createRange();r.selectNodeContents($('alertTxt'));getSelection().removeAllRanges();getSelection().addRange(r)}};
 drawHist();drawBal();
