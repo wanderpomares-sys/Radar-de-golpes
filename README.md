@@ -9,7 +9,7 @@ Página leve (PWA) para checar link de loja, anúncio, mensagem, telefone, Pix o
 - Gera um cartão de alerta para mandar no WhatsApp.
 - Assinatura R$ 2,99/mês ou R$ 9,99/ano (modo teste, sem cobrança real): ilimitado e sem vídeos. Integrar Google Play Billing e validar no servidor.
 - Dois espaços de anúncio pequenos (meio e rodapé), escondidos para assinantes. Nunca dentro do resultado.
-- Créditos: 1 verificação = 1 crédito. Começa com 5, ganha +3 por semana, +3 por vídeo (máx. 2 por sessão) e +1 ao denunciar. O vídeo é simulado (modo teste); trocar `showRewardedAd()` por AdMob ao empacotar como app Android.
+- Consultas: 1 verificação = 1 crédito. Começa com 5, ganha +3 por semana, +3 por vídeo (máx. 2 por sessão) e +1 ao denunciar. O vídeo é simulado (modo teste); trocar `showRewardedAd()` por AdMob ao empacotar como app Android.
 
 ## O que falta (dados coletivos)
 Contagem entre todos os usuários exige um servidor (ex.: Supabase ou Firebase) com: uma denúncia por aparelho e chave, revisão manual de chaves muito denunciadas e política de privacidade (LGPD).
