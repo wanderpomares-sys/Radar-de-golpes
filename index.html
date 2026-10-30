@@ -267,7 +267,7 @@ summary:focus-visible,textarea:focus-visible,a:focus-visible{outline:3px solid r
     <div id="hist"></div>
   </div>
   <div class="ad" data-ad="rodape" aria-label="Anúncio no rodapé"><span>Espaço de anúncio</span></div>
-  <p style="font-size:11px;line-height:1.4;color:var(--muted);text-align:center;margin:16px 6px 0">O Radar mostra sinais e relatos de pessoas. Não é prova nem decisão final. Na dúvida, ligue para a empresa pelo número oficial e nunca faça Pix para liberar prêmio, crédito ou taxa.</p>
+  <p style="font-size:11px;line-height:1.4;color:var(--muted);text-align:center;margin:16px 6px 0">O Radar mostra sinais e relatos de pessoas. Não é prova, garantia nem decisão final, e pode errar. Na dúvida, ligue para a empresa pelo número oficial e nunca faça Pix para liberar prêmio, crédito ou taxa. Ao usar o app, você concorda com os <a href="termos.html" style="color:inherit">Termos de Uso e Privacidade</a>.</p>
 </div>
 
 <div id="ovl" hidden aria-label="Tela de vídeo">
@@ -355,7 +355,7 @@ const ICON={
  ok:'<svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5.5 12.5l4.2 4.2L18.5 8"/></svg>'};
 const VERD={bad:['Eita! Parece golpe. Não pague.','Vários sinais batem com golpe conhecido. Não clique, não pague e não passe códigos.'],
  warn:['Cuidado, tá estranho.','Achei sinais de alerta. Confirme pelo site ou telefone oficial antes de fazer qualquer coisa.'],
- ok:['Não achei nada estranho.','Isso não garante que seja seguro. Na dúvida, confirme pelo canal oficial.']};
+ ok:['Não achei sinais de golpe.','Isso NÃO garante que seja seguro: eu só olho o link, o texto e alguns sinais conhecidos, e posso errar. Na dúvida, confirme pelo canal oficial da empresa antes de pagar.']};
 async function run(){
  const t=$('inp').value.trim();
  if(!t){$('hint').textContent='Ainda não tem nada aqui. Cole o link ou a mensagem primeiro.';$('inp').focus();return}
