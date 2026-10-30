@@ -155,6 +155,10 @@ summary:focus-visible,textarea:focus-visible,a:focus-visible{outline:3px solid r
 #mascot img{width:124px;height:124px;object-fit:contain;display:block;animation:float 4s ease-in-out infinite;filter:drop-shadow(0 10px 14px rgba(47,107,255,.25))}
 @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
 @media (prefers-reduced-motion: reduce){#mascot img{animation:none}}
+
+.v .top{align-items:center}
+.v .top #vi.pose{width:104px;height:104px;flex:0 0 104px;background:none!important;box-shadow:none!important;border-radius:0;display:block}
+#vi.pose img{width:104px;height:104px;object-fit:contain;display:block;filter:drop-shadow(0 8px 10px rgba(20,33,61,.18))}
 </style>
 </head>
 <body>
@@ -335,6 +339,7 @@ $('rwB').onclick=async()=>{if(adsNow>=AD_MAX)return;const ok=await showRewardedA
 let cur=null;
 const LS='radar.local.v1';
 const mine=()=>store.get(LS,{});
+const POSE={bad:'mascote-bravo.png',warn:'mascote.png',ok:'mascote-ok.png'};
 const ICON={
  bad:'<svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17"/></svg>',
  warn:'<svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4L3 20h18L12 4z"/><path d="M12 10v4.5M12 17.5h.01"/></svg>',
@@ -355,7 +360,7 @@ async function run(){
  let lv=rec.d>=3?'bad':level(sig);const key=lv==='none'?'ok':lv;
  const V=VERD[key];
  const v=$('verd');v.className='v '+(lv==='none'?'ok':lv);v.innerHTML='<div class="top"><span id="vi"></span><div><h2></h2></div></div><p></p><ul></ul>';
- v.querySelector('#vi').innerHTML=ICON[key];v.querySelector('h2').textContent=V[0];v.querySelector('p').textContent=V[1];
+ v.querySelector('#vi').className='pose';v.querySelector('#vi').innerHTML='<img src="'+POSE[key]+'" alt="" width="104" height="104">';v.querySelector('h2').textContent=V[0];v.querySelector('p').textContent=V[1];
  const ul=v.querySelector('ul');
  sig.slice(0,3).forEach(s=>{const li=document.createElement('li');li.textContent=s[0];ul.appendChild(li)});
  if(sig.length>3){const li=document.createElement('li');li.textContent='E mais '+(sig.length-3)+' sinais';ul.appendChild(li)}
