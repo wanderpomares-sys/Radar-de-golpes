@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#1553D6">
+<meta name="theme-color" content="#2F6BFF">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg">
 <title>Radar de Golpes</title>
@@ -13,65 +13,71 @@
 <meta property="og:description" content="Vai comprar ou pagar? Cole o link, o anúncio ou a mensagem e veja os sinais de golpe antes de clicar ou pagar.">
 <meta property="og:url" content="https://wanderpomares-sys.github.io/Radar-de-golpes/">
 <meta property="og:locale" content="pt_BR">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&display=swap">
 <style>
-/* Estilo: fundo claro, azul de confiança só para a ação principal, semáforo (vermelho, amarelo, verde) só para o resultado.
-   Letra grande, botões de 56 a 64 px, uma ação principal por tela, palavras do dia a dia. */
-:root{--bg:#F6F8FB;--card:#FFFFFF;--ink:#101828;--mute:#475467;--line:#D8DEE8;
---brand:#1553D6;--brand-ink:#FFFFFF;--brand-soft:#E8EFFE;--wa:#168A4A;--wa-ink:#FFFFFF;
---bad:#B42318;--badbg:#FEECEA;--warn:#8A5300;--warnbg:#FFF3D0;--ok:#146C43;--okbg:#E1F5E9;--none:#344054;--nonebg:#EEF1F6}
-@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0C1220;--card:#141C2E;--ink:#EEF2FA;--mute:#A8B3C7;--line:#2A3650;
---brand:#6C97FF;--brand-ink:#0A1226;--brand-soft:#1B2A52;--wa:#3DC27A;--wa-ink:#06210F;
+/* Estilo: amigável e conversado. Mascote redondo que muda de expressão, balão de fala, botões grandes em formato de pílula,
+   fonte arredondada e frases curtas do dia a dia. Semáforo (vermelho, amarelo, verde) só no resultado. */
+:root{--bg:#EAF2FF;--bg2:#F7FAFF;--card:#FFFFFF;--ink:#14213D;--mute:#4F5D78;--line:#CFDDF5;
+--brand:#2F6BFF;--brand-d:#1D4FCC;--brand-ink:#FFFFFF;--brand-soft:#DCE8FF;--sun:#FFC83D;
+--wa:#1EA855;--wa-d:#157E3F;--wa-ink:#FFFFFF;
+--bad:#C2271A;--badbg:#FFE9E6;--warn:#8F5700;--warnbg:#FFF1C9;--ok:#14733F;--okbg:#DDF6E6;--none:#344054;--nonebg:#EEF1F6}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0D1527;--bg2:#101A30;--card:#162240;--ink:#EEF3FF;--mute:#A9B7D4;--line:#2B3A60;
+--brand:#6C97FF;--brand-d:#4B78E6;--brand-ink:#0A1226;--brand-soft:#1D2D57;--sun:#FFD36B;--wa:#3DC27A;--wa-d:#2A9B5D;--wa-ink:#06210F;
 --bad:#FF9C92;--badbg:#3B1B1A;--warn:#FFD27A;--warnbg:#3A2C0C;--ok:#7BE0A6;--okbg:#10301F;--none:#C9D3E5;--nonebg:#1C2740;color-scheme:dark}}
 *{box-sizing:border-box}html,body{margin:0}
-body{font:18px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);padding-bottom:36px;
--webkit-text-size-adjust:100%}
+body{font:18px/1.45 Nunito,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-weight:600;color:var(--ink);padding-bottom:36px;
+background:linear-gradient(180deg,var(--bg) 0,var(--bg2) 520px) var(--bg2);background-attachment:scroll;-webkit-text-size-adjust:100%}
 .w{max-width:560px;margin:0 auto}
-header{padding:calc(14px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px))}
+header{padding:calc(14px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) 4px max(16px,env(safe-area-inset-left,0px))}
 header .w{display:flex;align-items:center;justify-content:space-between;gap:12px}
-.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:19px}
-.logo svg{width:34px;height:34px;flex:none}
-.bal{font-size:14px;font-weight:700;background:var(--brand-soft);color:var(--brand);border-radius:16px;padding:6px 12px;white-space:nowrap}
+.logo{font-weight:900;font-size:20px;letter-spacing:-.01em}
+.logo b{color:var(--brand)}
+.bal{font-size:14px;font-weight:800;background:var(--card);color:var(--brand);border:2px solid var(--line);border-radius:999px;padding:5px 13px;white-space:nowrap}
 main{padding:6px max(16px,env(safe-area-inset-right,0px)) 0 max(16px,env(safe-area-inset-left,0px))}
-h1{font-size:30px;line-height:1.15;margin:12px 0 8px;letter-spacing:-.01em;text-wrap:balance}
-.lead{margin:0 0 18px;color:var(--mute)}
-.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:14px}
-button,.btn{font:inherit;font-weight:700;border:0;border-radius:14px;min-height:56px;padding:0 18px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;text-decoration:none;width:100%}
-button svg,.btn svg{width:24px;height:24px;flex:none}
-.big{min-height:64px;font-size:20px}
-.pri{background:var(--brand);color:var(--brand-ink)}
-.wa{background:var(--wa);color:var(--wa-ink)}
-.sec{background:var(--card);color:var(--ink);border:2px solid var(--line)}
-.lnk{background:none;color:var(--brand);min-height:48px;font-weight:600;font-size:16px;text-decoration:underline}
-button:active,.btn:active{transform:scale(.985)}
-button:focus-visible,a:focus-visible,textarea:focus-visible,summary:focus-visible{outline:3px solid var(--brand);outline-offset:2px}
-.or{display:flex;align-items:center;gap:12px;color:var(--mute);font-size:14px;margin:14px 0}
-.or:before,.or:after{content:"";flex:1;height:1px;background:var(--line)}
-textarea{width:100%;min-height:92px;border:2px solid var(--line);border-radius:14px;padding:12px 14px;font:inherit;font-size:17px;background:var(--bg);color:var(--ink);resize:vertical;margin-bottom:10px}
-.hint{min-height:22px;margin:10px 2px 0;color:var(--mute);font-size:15px}
-.trust{display:flex;flex-wrap:wrap;gap:6px 14px;margin:6px 2px 18px;font-size:14px;color:var(--mute)}
-.trust span:before{content:"✓ ";color:var(--ok);font-weight:800}
-.v{border-radius:18px;padding:20px 18px;margin-bottom:14px;border:2px solid currentColor}
-.v .top{display:flex;gap:14px;align-items:center}
-.v svg{width:52px;height:52px;flex:none}
-.v h2{margin:0;font-size:26px;line-height:1.15}.v p{margin:6px 0 0;font-size:17px;color:var(--ink)}
-.v ul{margin:14px 0 0;padding-left:22px;color:var(--ink)}.v li{margin:5px 0;font-size:17px}
+.hero{display:flex;align-items:flex-end;gap:10px;margin:8px 0 22px}
+.hero svg.m{width:104px;height:104px;flex:none}
+.bubble{position:relative;background:var(--card);border:2px solid var(--line);border-radius:22px 22px 22px 6px;padding:14px 16px;font-size:20px;line-height:1.3;font-weight:800;margin-bottom:14px}
+.bubble small{display:block;font-size:15px;font-weight:600;color:var(--mute);margin-top:4px}
+.card{background:var(--card);border:2px solid var(--line);border-radius:24px;padding:18px;margin-bottom:16px}
+button,.btn{font:inherit;font-weight:800;border:0;border-radius:999px;min-height:58px;padding:0 22px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;text-decoration:none;width:100%;transition:transform .08s,box-shadow .08s}
+button svg,.btn svg{width:26px;height:26px;flex:none}
+.big{min-height:68px;font-size:21px}
+.pri{background:var(--brand);color:var(--brand-ink);box-shadow:0 5px 0 var(--brand-d)}
+.wa{background:var(--wa);color:var(--wa-ink);box-shadow:0 5px 0 var(--wa-d)}
+.sec{background:var(--card);color:var(--ink);border:2px solid var(--line);box-shadow:0 4px 0 var(--line)}
+.pri:active,.wa:active,.sec:active{transform:translateY(4px);box-shadow:none}
+.lnk{background:none;color:var(--brand);min-height:48px;font-weight:800;font-size:16px;text-decoration:underline;box-shadow:none;border:0;border-radius:12px}
+button:focus-visible,a:focus-visible,textarea:focus-visible,summary:focus-visible{outline:3px solid var(--sun);outline-offset:3px}
+.stack{display:flex;flex-direction:column;gap:14px}
+.or{display:flex;align-items:center;gap:12px;color:var(--mute);font-size:15px;margin:20px 0 14px;font-weight:700}
+.or:before,.or:after{content:"";flex:1;height:2px;background:var(--line);border-radius:2px}
+textarea{width:100%;min-height:92px;border:2px solid var(--line);border-radius:20px;padding:14px 16px;font:inherit;font-size:18px;background:var(--card);color:var(--ink);resize:vertical;margin-bottom:12px}
+.hint{min-height:22px;margin:2px 6px 0;color:var(--mute);font-size:15px;font-weight:700}
+.trust{display:flex;flex-wrap:wrap;gap:6px 14px;margin:16px 4px 6px;font-size:14px;color:var(--mute);font-weight:700}
+.trust span:before{content:"✓ ";color:var(--ok);font-weight:900}
+.v{border-radius:28px;padding:20px 18px;margin-bottom:16px;border:3px solid currentColor}
+.v .top{display:flex;gap:12px;align-items:center}
+.v svg.m{width:84px;height:84px;flex:none}
+.v h2{margin:0;font-size:27px;line-height:1.12;font-weight:900}.v p{margin:10px 0 0;font-size:17px;color:var(--ink)}
+.v ul{margin:12px 0 0;padding-left:22px;color:var(--ink)}.v li{margin:6px 0;font-size:17px}
 .bad{background:var(--badbg);color:var(--bad)}.warn{background:var(--warnbg);color:var(--warn)}.ok{background:var(--okbg);color:var(--ok)}.none{background:var(--nonebg);color:var(--none)}
-.ask{margin:2px 2px 8px;font-weight:700}
-.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-details{margin:14px 0}summary{cursor:pointer;font-weight:700;color:var(--brand);padding:10px 2px;min-height:48px;display:flex;align-items:center}
-.chips{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}.chip{font-size:13px;font-weight:700;padding:4px 10px;border-radius:12px;background:var(--bg);border:1px solid var(--line);color:var(--mute);overflow-wrap:anywhere}
-.stat{display:flex;gap:10px}.stat div{flex:1;background:var(--bg);border-radius:12px;padding:10px;text-align:center}
+.ask{margin:4px 6px 10px;font-weight:900;font-size:19px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+details{margin:16px 0}summary{cursor:pointer;font-weight:800;color:var(--brand);padding:10px 4px;min-height:48px;display:flex;align-items:center}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}.chip{font-size:13px;font-weight:800;padding:4px 12px;border-radius:999px;background:var(--bg);border:2px solid var(--line);color:var(--mute);overflow-wrap:anywhere}
+.stat{display:flex;gap:10px}.stat div{flex:1;background:var(--bg);border-radius:16px;padding:10px;text-align:center}
 .stat b{display:block;font-size:26px;font-variant-numeric:tabular-nums}.stat span{font-size:13px;color:var(--mute)}
-.alert{border:2px dashed var(--line);border-radius:12px;padding:12px;margin:10px 0;background:var(--bg);white-space:pre-wrap;font-size:15px}
-.note{color:var(--mute);font-size:14px;margin:8px 2px}
-h3{margin:0 0 6px;font-size:18px}
-.hist{display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-top:1px solid var(--line);font-size:15px}
+.alert{border:2px dashed var(--line);border-radius:16px;padding:12px;margin:10px 0;background:var(--bg);white-space:pre-wrap;font-size:15px}
+.note{color:var(--mute);font-size:14px;margin:8px 4px;font-weight:600}
+h3{margin:0 0 6px;font-size:19px;font-weight:900}
+.hist{display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-top:2px solid var(--line);font-size:15px}
 .hist:first-of-type{border-top:0}.hist span:first-child{overflow-wrap:anywhere;min-width:0}
-.ad{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:60px;margin:0 0 14px;border:1px dashed var(--line);border-radius:12px;color:var(--mute);font-size:13px;background:var(--card)}
+.ad{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:60px;margin:0 0 16px;border:2px dashed var(--line);border-radius:20px;color:var(--mute);font-size:13px;background:var(--card)}
 .ad small{font-size:10px;letter-spacing:.08em;text-transform:uppercase}
 .ovl{position:fixed;inset:0;background:rgba(5,10,20,.94);z-index:50;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;color:#fff;padding:24px;text-align:center}
-.ovl .bar{width:min(320px,80%);height:8px;background:#ffffff33;border-radius:4px;overflow:hidden}.ovl .bar i{display:block;height:100%;width:0;background:#6C97FF;transition:width 1s linear}
-.ovl .fake{width:min(320px,80%);aspect-ratio:16/9;border-radius:12px;background:linear-gradient(135deg,#1c2b4a,#1553D6);display:flex;align-items:center;justify-content:center;font-size:15px;padding:12px}
+.ovl .bar{width:min(320px,80%);height:10px;background:#ffffff33;border-radius:6px;overflow:hidden}.ovl .bar i{display:block;height:100%;width:0;background:#FFC83D;transition:width 1s linear}
+.ovl .fake{width:min(320px,80%);aspect-ratio:16/9;border-radius:20px;background:linear-gradient(135deg,#1c2b4a,#2F6BFF);display:flex;align-items:center;justify-content:center;font-size:15px;padding:12px}
 .ovl button{max-width:320px}
 [hidden]{display:none!important}
 @media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
@@ -79,25 +85,27 @@ h3{margin:0 0 6px;font-size:18px}
 </head>
 <body>
 <header><div class="w">
-<div class="logo"><svg viewBox="0 0 100 100" aria-hidden="true"><rect width="100" height="100" rx="22" fill="#1553D6"/><circle cx="50" cy="50" r="30" fill="none" stroke="#fff" stroke-width="6"/><circle cx="50" cy="50" r="15" fill="none" stroke="#fff" stroke-width="5" opacity=".65"/><path d="M50 50 L76 28" stroke="#FFC53D" stroke-width="7" stroke-linecap="round"/><circle cx="50" cy="50" r="6" fill="#FFC53D"/></svg>Radar de Golpes</div>
+<div class="logo">Radar <b>de Golpes</b></div>
 <div class="bal" id="balW"></div>
 </div></header>
 
 <main><div class="w">
-<h1>Vai comprar ou pagar? Confira antes.</h1>
-<p class="lead">Cole o link da loja, o anúncio ou a mensagem. Em segundos você vê se tem sinal de golpe.</p>
-
-<button class="pri big" id="paste"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="4" width="12" height="17" rx="2"/><path d="M9 4V3h6v1M9 11h6M9 15h4"/></svg>Colar e verificar</button>
+<div class="hero"><span id="mascot"></span><div class="bubble">Oi! Recebeu algo estranho?<small>Copie o link, o texto ou o print e cole aqui. Eu confiro pra você.</small></div></div>
+<div class="stack">
+<button class="pri big" id="paste"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="4" width="12" height="17" rx="2"/><path d="M9 4V3h6v1M9 11h6M9 15h4"/></svg>Colar e conferir</button>
+<button class="sec" id="pick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="M21 16l-5-5-8 8"/></svg>Escolher um print</button>
+<input type="file" id="pic" accept="image/*" hidden>
+</div>
 <p class="hint" id="hint" aria-live="polite"></p>
-<div class="or">ou escreva aqui</div>
+<div class="or">ou digite aqui</div>
 <label for="inp" hidden>Link, anúncio ou mensagem</label>
-<textarea id="inp" placeholder="Cole ou digite o link ou a mensagem"></textarea>
-<button class="sec" id="go">Verificar</button>
-<div class="trust"><span>Grátis para começar</span><span>Sem cadastro</span><span>O texto fica no seu celular</span></div>
+<textarea id="inp" placeholder="Cole aqui o link ou a mensagem"></textarea>
+<button class="sec" id="go">Conferir</button>
+<div class="trust"><span>Grátis para começar</span><span>Sem cadastro</span><span>Texto e imagem ficam no seu celular</span></div>
 
 <div class="card" id="rw" hidden>
-<h3 id="rwT">Suas consultas acabaram</h3>
-<p class="note" id="rwP" style="margin:0 0 12px">Veja um vídeo curto e ganhe 3 consultas. Elas não vencem.</p>
+<h3 id="rwT">Acabaram suas consultas</h3>
+<p class="note" id="rwP" style="margin:0 0 12px">Veja um vídeo rapidinho e ganhe 3 consultas. Elas não vencem.</p>
 <button class="pri" id="rwB">Ver vídeo e ganhar 3 consultas</button>
 <p class="or">ou sem vídeos</p>
 <div class="two"><button class="sec" id="sub">Mensal<br>R$ 2,99</button><button class="sec" id="subA">Anual<br>R$ 9,99</button></div>
@@ -106,9 +114,9 @@ h3{margin:0 0 6px;font-size:18px}
 
 <section id="res" hidden>
 <div id="verd" class="v" role="status"></div>
-<p class="ask">Quer avisar alguém?</p>
+<p class="ask">Que tal avisar alguém?</p>
 <a class="btn wa big" id="wa" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 0 1-12.6 7.4L3 21l2.1-5.2A8.5 8.5 0 1 1 21 11.5z"/></svg>Avisar minha família</a>
-<p class="ask" style="margin-top:18px">Você sabe se foi golpe?</p>
+<p class="ask" style="margin-top:20px">Você já sabe se foi golpe?</p>
 <div class="two"><button class="sec" id="yes">Foi golpe</button><button class="sec" id="no">Não foi golpe</button></div>
 <details><summary>Ver detalhes</summary>
 <div class="card">
@@ -118,10 +126,10 @@ h3{margin:0 0 6px;font-size:18px}
 <div class="alert" id="alertTxt"></div>
 <button class="sec" id="cp">Copiar aviso</button>
 </div></details>
-<button class="lnk" id="again">Verificar outro</button>
+<button class="lnk" id="again">Conferir outro</button>
 </section>
 
-<button class="lnk" id="ex">Ver um exemplo</button>
+<button class="lnk" id="ex">Quer ver como funciona? Toque aqui</button>
 
 <div class="ad" data-ad="meio" aria-label="Publicidade"><small>Publicidade</small><span>Espaço de anúncio (modo teste)</span></div>
 <div class="card" id="histC" hidden><h3>Suas últimas consultas</h3><div id="hist"></div></div>
@@ -199,7 +207,7 @@ function showRewardedAd(){return new Promise(res=>{const o=$('ovl'),b=$('ovB'),t
   if(n<=0){clearInterval(iv);x.hidden=false;x.textContent='Receber minhas consultas';x.onclick=()=>{o.hidden=true;res(true)}}},1000);
  b.style.width=(1/AD_SECONDS*100)+'%'})}
 function showReward(){const full=adsNow>=AD_MAX;$('rw').hidden=false;
- $('rwP').textContent=full?'Você já viu '+AD_MAX+' vídeos agora. Volte mais tarde, ganhe +1 consulta denunciando um golpe ou assine. Toda semana você recebe '+WEEKLY+' consultas grátis.':'Veja um vídeo curto e ganhe '+PER_AD+' consultas. Elas não vencem.';
+ $('rwP').textContent=full?'Você já viu '+AD_MAX+' vídeos agora. Volte mais tarde, ganhe +1 consulta contando de um golpe ou assine. Toda semana você ganha '+WEEKLY+' consultas grátis.':'Veja um vídeo rapidinho e ganhe '+PER_AD+' consultas. Elas não vencem.';
  $('rwB').hidden=full;$('rw').scrollIntoView({behavior:'smooth',block:'center'})}
 $('sub').onclick=()=>subscribe('mensal');$('subA').onclick=()=>subscribe('anual');
 $('rwB').onclick=async()=>{if(adsNow>=AD_MAX)return;const ok=await showRewardedAd();if(ok){adsNow++;addCred(PER_AD);$('rw').hidden=true}};
@@ -207,16 +215,20 @@ $('rwB').onclick=async()=>{if(adsNow>=AD_MAX)return;const ok=await showRewardedA
 let cur=null;
 const LS='radar.local.v1';
 const mine=()=>store.get(LS,{});
-const ICON={
- bad:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M8 8l8 8M16 8l-8 8"/></svg>',
- warn:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3L2 21h20L12 3z"/><path d="M12 10v5M12 18h.01"/></svg>',
- ok:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.5l3 3 6-7"/></svg>'};
-const VERD={bad:['Parece golpe. Não pague.','Vários sinais batem com golpe conhecido. Não clique, não pague e não passe códigos.'],
- warn:['Cuidado. Confirme antes.','Há sinais de alerta. Confirme pelo site ou telefone oficial antes de agir.'],
- ok:['Nenhum sinal encontrado.','Isso não garante que seja seguro. Na dúvida, confirme pelo canal oficial.']};
+function mascot(mood){
+ const eyes={ok:'<circle cx="38" cy="52" r="7" fill="#fff"/><circle cx="62" cy="52" r="7" fill="#fff"/><circle cx="39" cy="53" r="3.5" fill="#14213D"/><circle cx="63" cy="53" r="3.5" fill="#14213D"/>',
+  warn:'<circle cx="38" cy="52" r="7" fill="#fff"/><circle cx="62" cy="52" r="7" fill="#fff"/><circle cx="40" cy="53" r="3.5" fill="#14213D"/><circle cx="64" cy="53" r="3.5" fill="#14213D"/><path d="M30 41l16 4M70 41l-16 4" stroke="#14213D" stroke-width="3" stroke-linecap="round"/>',
+  bad:'<circle cx="38" cy="53" r="7" fill="#fff"/><circle cx="62" cy="53" r="7" fill="#fff"/><circle cx="38" cy="54" r="3.5" fill="#14213D"/><circle cx="62" cy="54" r="3.5" fill="#14213D"/><path d="M29 44l16 6M71 44l-16 6" stroke="#14213D" stroke-width="3.4" stroke-linecap="round"/>'}[mood];
+ const mouth={ok:'<path d="M38 68q12 12 24 0" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"/>',
+  warn:'<path d="M40 72q10-6 20 0" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"/>',
+  bad:'<ellipse cx="50" cy="71" rx="7" ry="6" fill="#fff"/>'}[mood];
+ return '<svg class="m" viewBox="0 0 100 100" aria-hidden="true"><path d="M50 22V10" stroke="#14213D" stroke-width="3" stroke-linecap="round"/><circle cx="50" cy="8" r="6" fill="#FFC83D" stroke="#14213D" stroke-width="2.5"/><circle cx="50" cy="56" r="40" fill="#2F6BFF"/><circle cx="50" cy="56" r="40" fill="none" stroke="#14213D" stroke-width="2.5" opacity=".25"/>'+eyes+mouth+(mood==='bad'?'<path d="M18 36c-6 6-6 14 0 20M82 36c6 6 6 14 0 20" fill="none" stroke="#FFC83D" stroke-width="3.5" stroke-linecap="round"/>':'')+'</svg>'}
+const VERD={bad:['Eita! Parece golpe. Não pague.','Vários sinais batem com golpe conhecido. Não clique, não pague e não passe códigos.'],
+ warn:['Cuidado, tá estranho.','Achei sinais de alerta. Confirme pelo site ou telefone oficial antes de fazer qualquer coisa.'],
+ ok:['Não achei nada estranho.','Isso não garante que seja seguro. Na dúvida, confirme pelo canal oficial.']};
 async function run(){
  const t=$('inp').value.trim();
- if(!t){$('hint').textContent='Cole ou escreva o link ou a mensagem primeiro.';$('inp').focus();return}
+ if(!t){$('hint').textContent='Ainda não tem nada aqui. Cole o link ou a mensagem primeiro.';$('inp').focus();return}
  $('hint').textContent='';
  if(!isPrem()&&cred().s<1){showReward();return}
  addCred(-1);
@@ -227,7 +239,7 @@ async function run(){
  let lv=rec.d>=3?'bad':level(sig);const key=lv==='none'?'ok':lv;
  const V=VERD[key];
  const v=$('verd');v.className='v '+(lv==='none'?'ok':lv);v.innerHTML='<div class="top"><span id="vi"></span><div><h2></h2></div></div><p></p><ul></ul>';
- v.querySelector('#vi').innerHTML=ICON[key];v.querySelector('h2').textContent=V[0];v.querySelector('p').textContent=V[1];
+ v.querySelector('#vi').innerHTML=mascot(key);v.querySelector('h2').textContent=V[0];v.querySelector('p').textContent=V[1];
  const ul=v.querySelector('ul');
  sig.slice(0,3).forEach(s=>{const li=document.createElement('li');li.textContent=s[0];ul.appendChild(li)});
  if(sig.length>3){const li=document.createElement('li');li.textContent='E mais '+(sig.length-3)+' sinais';ul.appendChild(li)}
@@ -249,18 +261,35 @@ function vote(v){if(!cur)return;const db=mine();const r=db[cur.h];if(r.mine===v)
 function hist(t,v,lv){const H=store.get('radar.hist.v1',[]);H.unshift({t:t.slice(0,60),v,lv});store.set('radar.hist.v1',H.slice(0,8));drawHist()}
 function drawHist(){const H=store.get('radar.hist.v1',[]);$('histC').hidden=!H.length;$('hist').innerHTML='';
  H.forEach(x=>{const d=document.createElement('div');d.className='hist';const a=document.createElement('span');a.textContent=x.t;const b=document.createElement('span');b.textContent=x.v.split('.')[0];b.style.fontWeight=700;b.style.color=x.lv==='bad'?'var(--bad)':x.lv==='warn'?'var(--warn)':'var(--ok)';b.style.whiteSpace='nowrap';d.append(a,b);$('hist').appendChild(d)})}
+/* Leitura de print: o texto da imagem é lido no próprio aparelho (a imagem não é enviada). A biblioteca só é baixada quando alguém usa uma imagem. */
+let tessP=null;
+function loadTess(){return tessP||(tessP=new Promise((ok,err)=>{const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js';s.onload=()=>ok(window.Tesseract);s.onerror=()=>{tessP=null;err(new Error('load'))};document.head.appendChild(s)}))}
+async function readImage(file){
+ $('hint').textContent='Lendo a imagem… a primeira vez demora um pouco.';
+ try{const T=window.Tesseract||await loadTess();
+  const r=await T.recognize(file,'por',{logger:m=>{if(m.status==='recognizing text')$('hint').textContent='Lendo a imagem… '+Math.round(m.progress*100)+'%'}});
+  const t=((r.data&&r.data.text)||'').replace(/(-|\/)[ \t]*\n[ \t]*/g,'$1').replace(/[ \t]+\n/g,'\n').trim();
+  if(t.length<6){$('hint').textContent='Não consegui ler o texto desse print. Tente um print mais nítido ou cole o link.';return}
+  $('inp').value=t;$('hint').textContent='';run();
+ }catch(e){$('hint').textContent='Não consegui abrir o leitor de imagem agora. Confira a internet ou cole o texto.'}}
 async function pasteGo(){
- try{const t=await navigator.clipboard.readText();
-  if(t&&t.trim()){$('inp').value=t.trim();run();return}
-  $('hint').textContent='Não achei nada copiado. Copie o link ou a mensagem e toque de novo.';
- }catch(e){$('hint').textContent='Toque no campo abaixo, segure e escolha "Colar".';$('inp').focus()}}
+ try{
+  if(navigator.clipboard.read){const items=await navigator.clipboard.read();
+   for(const it of items){const ty=it.types.find(x=>x.startsWith('image/'));if(ty){return readImage(await it.getType(ty))}}
+   for(const it of items){if(it.types.includes('text/plain')){const t=await(await it.getType('text/plain')).text();if(t.trim()){$('inp').value=t.trim();return run()}}}
+  }else{const t=await navigator.clipboard.readText();if(t&&t.trim()){$('inp').value=t.trim();return run()}}
+  $('hint').textContent='Não achei nada copiado. Copie o link, o texto ou o print e toque de novo.';
+ }catch(e){$('hint').textContent='Toque no campo abaixo, segure e escolha "Colar". Para print, use "Escolher um print da galeria".';$('inp').focus()}}
+$('pick').onclick=()=>$('pic').click();
+$('pic').onchange=()=>{const f=$('pic').files[0];$('pic').value='';if(f)readImage(f)};
+document.addEventListener('paste',e=>{const f=[...((e.clipboardData&&e.clipboardData.files)||[])].find(x=>x.type.startsWith('image/'));if(f){e.preventDefault();readImage(f)}});
 $('paste').onclick=pasteGo;
 $('go').onclick=run;
 $('again').onclick=()=>{$('inp').value='';$('res').hidden=true;$('ex').hidden=false;window.scrollTo({top:0,behavior:'smooth'})};
 $('ex').onclick=()=>{$('inp').value='PS5 por R$ 1.299! Só hoje, últimas unidades, 80% off + frete grátis. Pague no Pix e leve: https://magalu-ofertas-oficial.shop/ps5';run()};
 $('yes').onclick=()=>vote('y');$('no').onclick=()=>vote('n');
 $('cp').onclick=async()=>{try{await navigator.clipboard.writeText($('alertTxt').textContent);$('cp').textContent='Copiado ✓'}catch(e){const r=document.createRange();r.selectNodeContents($('alertTxt'));getSelection().removeAllRanges();getSelection().addRange(r)}};
-drawHist();drawBal();
+drawHist();drawBal();$('mascot').innerHTML=mascot('ok');
 $('inv').href='https://wa.me/?text='+encodeURIComponent('Recebeu mensagem, link ou Pix suspeito? Use o Radar de Golpes para ver os sinais antes de clicar ou pagar: https://wanderpomares-sys.github.io/Radar-de-golpes/');
 /* Receber link direto do menu Compartilhar do celular (app instalado) */
 (function(){const q=new URLSearchParams(location.search);const sh=[q.get('title'),q.get('text'),q.get('url')].filter(Boolean).join(' ').trim();
