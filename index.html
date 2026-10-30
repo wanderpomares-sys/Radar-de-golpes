@@ -219,8 +219,8 @@ summary:focus-visible,textarea:focus-visible,a:focus-visible{outline:3px solid r
     </button>
     <div class="divider">ou sem vídeos</div>
     <div class="row">
-      <div class="plan" style="flex:1"><button id="sub" class="btn ghost" style="width:100%">Mensal R$ 2,99</button></div>
-      <div class="plan" style="flex:1.2"><span class="badge-best">melhor valor</span><button id="subA" class="btn primary" style="width:100%;min-height:56px">Anual R$ 9,99</button></div>
+      <div class="plan" style="flex:1"><button id="sub" class="btn ghost" style="width:100%">Mensal (em breve)</button></div>
+      <div class="plan" style="flex:1.2"><span class="badge-best">melhor valor</span><button id="subA" class="btn primary" style="width:100%;min-height:56px">Anual (em breve)</button></div>
     </div>
     <p style="margin:0;font-size:12px;color:var(--muted);text-align:center">Consultas ilimitadas e sem vídeos. Cancele quando quiser.</p>
   </div>
@@ -268,8 +268,10 @@ summary:focus-visible,textarea:focus-visible,a:focus-visible{outline:3px solid r
   </div>
   <div class="ad" data-ad="rodape" aria-label="Anúncio no rodapé"><span>Espaço de anúncio</span></div>
   <p style="font-size:11px;line-height:1.4;color:var(--muted);text-align:center;margin:16px 6px 0">O Radar mostra sinais e relatos de pessoas. Não é prova, garantia nem decisão final, e pode errar. Na dúvida, ligue para a empresa pelo número oficial e nunca faça Pix para liberar prêmio, crédito ou taxa. Ao usar o app, você concorda com os <a href="termos.html" style="color:inherit">Termos de Uso e Privacidade</a>.</p>
+  <details style="font-size:11px;line-height:1.5;color:var(--muted);margin:10px 6px 0"><summary style="cursor:pointer;text-align:center;font-weight:700">Avisos legais</summary><ul style="margin:8px 0 0;padding-left:18px"><li><b>Responsabilidade:</b> o resultado é uma estimativa automática e pode errar. Não é garantia, laudo nem recomendação de compra. A decisão final é sua.</li><li><b>Privacidade (LGPD):</b> textos, links e prints são analisados no seu aparelho e não são enviados a servidor. Histórico, créditos e marcações ficam só aqui e você apaga limpando os dados do app.</li><li><b>Seus direitos:</b> você pode pedir acesso, correção ou exclusão de dados (LGPD, art. 18) pelo contato nos <a href="termos.html" style="color:inherit">Termos</a>.</li><li><b>Opiniões:</b> "Foi golpe" e "Não foi golpe" são opiniões suas, não fatos comprovados. Não use para acusar pessoas ou empresas.</li><li><b>Marcas:</b> nomes de lojas e bancos aparecem só para comparar endereços oficiais. O Radar não tem ligação com essas empresas.</li><li><b>Anúncios:</b> são de terceiros e não são recomendação do Radar.</li><li><b>Uso:</b> app para maiores de 18 anos. Em caso de golpe, procure o banco, registre boletim de ocorrência e contate o Procon ou o Consumidor.gov.br.</li></ul></details>
 </div>
 
+<div id="tos" hidden style="position:fixed;inset:0;z-index:60;background:rgba(20,33,61,.55);display:grid;place-items:center;padding:20px"><div class="glass" style="max-width:420px;background:#fff"><h3 style="margin:0 0 8px;font-size:18px">Antes de começar</h3><p style="margin:0 0 10px;font-size:14px;line-height:1.5">O Radar aponta sinais de golpe, mas <b>pode errar</b> e não garante que algo seja seguro. A decisão de clicar ou pagar é sua. Seu texto e seus prints são analisados no seu aparelho.</p><p style="margin:0 0 14px;font-size:13px"><a href="termos.html">Ler Termos de Uso e Privacidade</a></p><button id="tosOk" class="btn primary" style="width:100%">Entendi e aceito</button></div></div>
 <div id="ovl" hidden aria-label="Tela de vídeo">
   <div class="box">
     <div class="video">Espaço do vídeo 16:9</div>
@@ -329,7 +331,8 @@ const PK='radar.premium.v1';
 const isPrem=()=>!!store.get(PK,false);
 function addCred(n){if(isPrem())return;const c=cred();c.s=Math.max(0,c.s+n);store.set(CK,c);drawBal()}
 /* Troque por Google Play Billing (Capacitor) e valide a assinatura no servidor. Aqui é só modo teste. */
-function subscribe(p){store.set(PK,p);drawBal();$('rw').hidden=true}
+const BILLING_LIVE=false; /* só vira true quando o Google Play Billing estiver ligado */
+function subscribe(p){if(!BILLING_LIVE){const h=$('rwP');h.textContent='Os planos sem anúncios chegam em breve. Por enquanto, ganhe consultas assistindo vídeos.';return}store.set(PK,p);drawBal();$('rw').hidden=true}
 /* Anúncios só fora do resultado. Nunca dentro do veredito. Trocar pelo bloco do AdMob/AdSense. */
 function drawAds(){document.querySelectorAll('.ad').forEach(a=>a.hidden=isPrem())}
 function drawBal(){drawAds();const n=cred().s;$('balW').textContent=isPrem()?'Plano '+store.get(PK,'')+' ativo':n+(n===1?' consulta':' consultas')}
@@ -353,7 +356,7 @@ const ICON={
  bad:'<svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17"/></svg>',
  warn:'<svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4L3 20h18L12 4z"/><path d="M12 10v4.5M12 17.5h.01"/></svg>',
  ok:'<svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5.5 12.5l4.2 4.2L18.5 8"/></svg>'};
-const VERD={bad:['Eita! Parece golpe. Não pague.','Vários sinais batem com golpe conhecido. Não clique, não pague e não passe códigos.'],
+const VERD={bad:['Eita! Parece golpe. Melhor não pagar.','Vários sinais batem com golpes conhecidos. Por segurança, não clique, não pague e não passe códigos. Confirme pelo canal oficial.'],
  warn:['Cuidado, tá estranho.','Achei sinais de alerta. Confirme pelo site ou telefone oficial antes de fazer qualquer coisa.'],
  ok:['Não achei sinais de golpe.','Isso NÃO garante que seja seguro: eu só olho o link, o texto e alguns sinais conhecidos, e posso errar. Na dúvida, confirme pelo canal oficial da empresa antes de pagar.']};
 async function run(){
@@ -373,18 +376,20 @@ async function run(){
  const ul=v.querySelector('ul');
  sig.slice(0,3).forEach(s=>{const li=document.createElement('li');li.textContent=s[0];ul.appendChild(li)});
  if(sig.length>3){const li=document.createElement('li');li.textContent='E mais '+(sig.length-3)+' sinais';ul.appendChild(li)}
+ if(key==='ok'){const L=['Conferi: endereço, palavras de golpe e marcas conhecidas','Não consigo ver o vendedor, a entrega nem o pagamento'];if(k.tipo==='link'&&!OFICIAIS.some(o=>String(k.valor).includes(o)))L.unshift('Não conheço este site. Veja se é o oficial');L.forEach(x=>{const li=document.createElement('li');li.textContent=x;ul.appendChild(li)})}
  if(rec.d)ul.insertAdjacentHTML('beforeend','<li>'+rec.d+' denúncia(s) neste aparelho</li>');
  if(!ul.children.length)ul.remove();
  $('chips').innerHTML='';[['Tipo: '+k.tipo],[k.tipo==='texto'?'Texto comparado sem números':k.valor.length>30?k.valor.slice(0,28)+'…':k.valor]].forEach(c=>{const s=document.createElement('span');s.className='chip';s.textContent=c[0];$('chips').appendChild(s)});
  $('nCons').textContent=rec.c;$('nDen').textContent=rec.d;
  $('scope').textContent='Contagem só deste aparelho. A contagem de todos os usuários entra quando o servidor estiver ligado.';
  mark(rec);
- const alert='Cuidado com golpe\n'+(k.tipo==='link'?'Link: '+k.valor:k.tipo==='texto'?'Mensagem parecida com esta:\n"'+t.slice(0,140)+'"':k.tipo+': '+k.valor)+'\n'+(sig.slice(0,3).map(s=>'- '+s[0]).join('\n'))+'\nNão clique, não pague e não passe códigos. Confirme pelo canal oficial.';
- $('alertTxt').textContent=alert;$('wa').href='https://wa.me/?text='+encodeURIComponent(alert);
+ const alert='Atenção: o Radar de Golpes viu sinais de golpe neste conteúdo (pode errar)\n'+(k.tipo==='link'?'Link: '+k.valor:k.tipo==='texto'?'Mensagem parecida com esta:\n"'+t.slice(0,140)+'"':k.tipo+': '+k.valor)+'\n'+(sig.slice(0,3).map(s=>'- '+s[0]).join('\n'))+'\nPor segurança, não clique nem pague antes de confirmar pelo canal oficial.';
+ [$('wa'),$('alertTxt'),$('cp')].forEach(e=>e.hidden=(key==='ok'));$('alertTxt').textContent=alert;$('wa').href='https://wa.me/?text='+encodeURIComponent(alert);
  $('res').hidden=false;$('ex').hidden=true;$('res').scrollIntoView({behavior:'smooth',block:'start'});
  hist(t,V[0],lv)}
 function mark(rec){$('yes').style.borderColor=rec.mine==='y'?'var(--bad)':'';$('no').style.borderColor=rec.mine==='n'?'var(--ok)':'';
  $('yes').textContent=rec.mine==='y'?'Denunciado ✓':'Foi golpe';$('no').textContent=rec.mine==='n'?'Marcado como legítimo ✓':'Não foi golpe'}
+$('no').title='Sua marcação é só uma opinião sua';
 function vote(v){if(!cur)return;const db=mine();const r=db[cur.h];if(r.mine===v)return;
  if(v==='y'&&!r.paid){r.paid=1;addCred(1)}
  if(r.mine==='y')r.d--;if(v==='y')r.d++;r.mine=v;store.set(LS,db);$('nDen').textContent=r.d;mark(r)}
@@ -428,6 +433,8 @@ if('serviceWorker' in navigator&&location.protocol.startsWith('http')){
  const had=!!navigator.serviceWorker.controller;let rl=false;
  navigator.serviceWorker.addEventListener('controllerchange',()=>{if(had&&!rl){rl=true;location.reload()}});
  navigator.serviceWorker.register('sw.js').catch(()=>{});}
+try{if(!localStorage.getItem('radar.tos.v1'))$('tos').hidden=false}catch(e){}
+$('tosOk').onclick=()=>{try{localStorage.setItem('radar.tos.v1','1')}catch(e){}$('tos').hidden=true};
 </script>
 </body>
 </html>
