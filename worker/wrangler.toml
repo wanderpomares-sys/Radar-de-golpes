@@ -1,0 +1,7 @@
+name = "radar-webrisk"
+main = "webrisk-proxy.js"
+compatibility_date = "2024-11-01"
+
+[vars]
+ALLOWED_ORIGIN = "https://wanderpomares-sys.github.io"
+# a chave NÃO vai aqui. Crie com: npx wrangler secret put WEBRISK_KEY

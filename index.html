@@ -268,7 +268,7 @@ summary:focus-visible,textarea:focus-visible,a:focus-visible{outline:3px solid r
   </div>
   <div class="ad" data-ad="rodape" aria-label="Anúncio no rodapé"><span>Espaço de anúncio</span></div>
   <p style="font-size:11px;line-height:1.4;color:var(--muted);text-align:center;margin:16px 6px 0">O Radar mostra sinais e relatos de pessoas. Não é prova, garantia nem decisão final, e pode errar. Na dúvida, ligue para a empresa pelo número oficial e nunca faça Pix para liberar prêmio, crédito ou taxa. Ao usar o app, você concorda com os <a href="termos.html" style="color:inherit">Termos de Uso e Privacidade</a>.</p>
-  <details style="font-size:11px;line-height:1.5;color:var(--muted);margin:10px 6px 0"><summary style="cursor:pointer;text-align:center;font-weight:700">Avisos legais</summary><ul style="margin:8px 0 0;padding-left:18px"><li><b>Responsabilidade:</b> o resultado é uma estimativa automática e pode errar. Não é garantia, laudo nem recomendação de compra. A decisão final é sua.</li><li><b>Privacidade (LGPD):</b> textos, links e prints são analisados no seu aparelho e não são enviados a servidor. Histórico, créditos e marcações ficam só aqui e você apaga limpando os dados do app.</li><li><b>Seus direitos:</b> você pode pedir acesso, correção ou exclusão de dados (LGPD, art. 18) pelo contato nos <a href="termos.html" style="color:inherit">Termos</a>.</li><li><b>Opiniões:</b> "Foi golpe" e "Não foi golpe" são opiniões suas, não fatos comprovados. Não use para acusar pessoas ou empresas.</li><li><b>Marcas:</b> nomes de lojas e bancos aparecem só para comparar endereços oficiais. O Radar não tem ligação com essas empresas.</li><li><b>Anúncios:</b> são de terceiros e não são recomendação do Radar.</li><li><b>Uso:</b> app para maiores de 18 anos. Em caso de golpe, procure o banco, registre boletim de ocorrência e contate o Procon ou o Consumidor.gov.br.</li></ul></details>
+  <details style="font-size:11px;line-height:1.5;color:var(--muted);margin:10px 6px 0"><summary style="cursor:pointer;text-align:center;font-weight:700">Avisos legais</summary><ul style="margin:8px 0 0;padding-left:18px"><li><b>Responsabilidade:</b> o resultado é uma estimativa automática e pode errar. Não é garantia, laudo nem recomendação de compra. A decisão final é sua.</li><li><b>Privacidade (LGPD):</b> textos, links e prints são analisados no seu aparelho e não são enviados a servidor. Histórico, créditos e marcações ficam só aqui e você apaga limpando os dados do app.</li><li><b>Seus direitos:</b> você pode pedir acesso, correção ou exclusão de dados (LGPD, art. 18) pelo contato nos <a href="termos.html" style="color:inherit">Termos</a>.</li><li><b>Consulta do Google:</b> quando essa função estiver ligada, o endereço do link (sem parâmetros) é enviado ao Google Web Risk para ver se o site é listado como perigoso. Textos e prints nunca são enviados.</li><li><b>Opiniões:</b> "Foi golpe" e "Não foi golpe" são opiniões suas, não fatos comprovados. Não use para acusar pessoas ou empresas.</li><li><b>Marcas:</b> nomes de lojas e bancos aparecem só para comparar endereços oficiais. O Radar não tem ligação com essas empresas.</li><li><b>Anúncios:</b> são de terceiros e não são recomendação do Radar.</li><li><b>Uso:</b> app para maiores de 18 anos. Em caso de golpe, procure o banco, registre boletim de ocorrência e contate o Procon ou o Consumidor.gov.br.</li></ul></details>
 </div>
 
 <div id="tos" hidden style="position:fixed;inset:0;z-index:60;background:rgba(20,33,61,.55);display:grid;place-items:center;padding:20px"><div class="glass" style="max-width:420px;background:#fff"><h3 style="margin:0 0 8px;font-size:18px">Antes de começar</h3><p style="margin:0 0 10px;font-size:14px;line-height:1.5">O Radar aponta sinais de golpe, mas <b>pode errar</b> e não garante que algo seja seguro. A decisão de clicar ou pagar é sua. Seu texto e seus prints são analisados no seu aparelho.</p><p style="margin:0 0 14px;font-size:13px"><a href="termos.html">Ler Termos de Uso e Privacidade</a></p><button id="tosOk" class="btn primary" style="width:100%">Entendi e aceito</button></div></div>
@@ -367,6 +367,16 @@ const VERD={bad:['Eita! Parece golpe. Melhor não pagar.','Vários sinais batem 
  warn:['Cuidado, tá estranho.','Achei sinais de alerta. Confirme pelo site ou telefone oficial antes de fazer qualquer coisa.'],
  unk:['Não consigo garantir este site.','Não achei sinais óbvios, mas não conheço este endereço e não consulto listas de sites perigosos, como os antivírus fazem. Confira também nos verificadores abaixo antes de colocar dados ou pagar.'],
  ok:['Não achei sinais de golpe.','Isso NÃO garante que seja seguro: eu só olho o link, o texto e alguns sinais conhecidos, e posso errar. Na dúvida, confirme pelo canal oficial da empresa antes de pagar.']};
+/* Consulta de sites perigosos (Google Web Risk) por um intermediário seu. Veja SETUP-WEBRISK.md. Vazio = desligado. */
+const CHECK_ENDPOINT='';
+const THREAT_PT={MALWARE:'vírus/malware',SOCIAL_ENGINEERING:'golpe/phishing',UNWANTED_SOFTWARE:'programa indesejado'};
+async function googleCheck(k){
+ if(!CHECK_ENDPOINT||k.tipo!=='link')return null;
+ try{const raw=/^https?:\/\//i.test(k.full)?k.full:'https://'+k.full;const u=new URL(raw);
+  const send=u.protocol+'//'+u.host+u.pathname; /* sem parâmetros (?...) nem #, para não vazar dados pessoais */
+  const c=new AbortController(),tm=setTimeout(()=>c.abort(),4000);
+  const r=await fetch(CHECK_ENDPOINT+'?u='+encodeURIComponent(send),{signal:c.signal,cache:'no-store'});clearTimeout(tm);
+  if(!r.ok)return null;const j=await r.json();return Array.isArray(j.threats)?j.threats:null}catch(e){return null}}
 async function run(){
  const t=$('inp').value.trim();
  if(!t){$('hint').textContent='Ainda não tem nada aqui. Cole o link ou a mensagem primeiro.';$('inp').focus();return}
@@ -375,6 +385,8 @@ async function run(){
  addCred(-1);
  const k=extract(t);const h=await sha(k.tipo+':'+k.valor);
  const sig=analyze(t,k).sort((a,b)=>b[1]-a[1]);const db=mine();const rec=db[h]||{c:0,d:0,n:0,mine:null,tipo:k.tipo};
+ const gth=await googleCheck(k);
+ if(gth&&gth.length)sig.unshift(['O Google lista este site como perigoso ('+gth.map(x=>THREAT_PT[x]||x).join(', ')+')',6]);
  rec.c++;db[h]=rec;store.set(LS,db);
  cur={h,k,sig,t};
  let lv=rec.d>=3?'bad':level(sig);
@@ -390,6 +402,7 @@ async function run(){
  if(sig.length>3){const li=document.createElement('li');li.textContent='E mais '+(sig.length-3)+' sinais';ul.appendChild(li)}
 
  if(k.tipo==='link'){const d=encodeURIComponent(k.valor),x=document.createElement('p');x.style.cssText='margin:10px 0 0;font-size:13px;line-height:1.6';x.innerHTML='Conferir também: <a target="_blank" rel="noopener noreferrer" href="https://www.virustotal.com/gui/search/'+d+'">VirusTotal</a> · <a target="_blank" rel="noopener noreferrer" href="https://transparencyreport.google.com/safe-browsing/search?url='+d+'">Google Navegação Segura</a>';v.appendChild(x)}
+ if(gth&&!gth.length){const li=document.createElement('li');li.textContent='Google Navegação Segura: nada listado (isso não é aval)';ul.appendChild(li)}
  if(key==='ok'){const L=['Conferi: endereço, palavras de golpe e marcas conhecidas','Não consigo ver o vendedor, a entrega nem o pagamento'];if(k.tipo==='link'&&!isOff)L.unshift('Não conheço este site. Veja se é o oficial');L.forEach(x=>{const li=document.createElement('li');li.textContent=x;ul.appendChild(li)})}
  if(rec.d)ul.insertAdjacentHTML('beforeend','<li>'+rec.d+' denúncia(s) neste aparelho</li>');
  if(!ul.children.length)ul.remove();
