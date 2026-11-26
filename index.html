@@ -307,6 +307,11 @@ function extract(t){
  return{tipo:'texto',valor:t.toLowerCase().replace(/\d+/g,'#').replace(/\s+/g,' ').trim().slice(0,160)}}
 function analyze(t,k){const sig=[];
  for(const [re,l] of WORDS) if(re.test(t)) sig.push([l,1]);
+ const PRZ=/pr[eê]mi|brinde|cesta|presente|sorteio|ganh(ar|e|ou)|chance de (obter|ganhar)/i;
+ if(/question[aá]rio|pesquisa|enquete/i.test(t)&&PRZ.test(t))sig.push(['Questionário que promete prêmio: truque muito usado em golpe',3]);
+ if(/pergunta\s*\d+\s*de\s*\d+/i.test(t)&&PRZ.test(t))sig.push(['Perguntas em etapas para "liberar" um prêmio, truque clássico',2]);
+ if(/parab[eé]ns/i.test(t)&&PRZ.test(t))sig.push(['"Parabéns" para quem nem participou de nada',1]);
+ if(/nunca esperei ganhar|que surpresa!|muito obrigad[oa],? @|coment[aá]rio\s*\d+\s*\/\s*\d+/i.test(t))sig.push(['Comentários de "ganhadores" na página costumam ser falsos',2]);
  if(k.tipo==='link'){const d=k.valor;
   if(SHORT.includes(d))sig.push(['Link encurtado esconde o destino',2]);
   if(/^\d+\.\d+\.\d+\.\d+/.test(d))sig.push(['Endereço é um número (IP)',3]);
@@ -397,16 +402,21 @@ function hist(t,v,lv){const H=store.get('radar.hist.v1',[]);H.unshift({t:t.slice
 function drawHist(){const H=store.get('radar.hist.v1',[]);$('histC').hidden=!H.length;$('hist').innerHTML='';
  H.forEach(x=>{const d=document.createElement('div');d.className='hist';const a=document.createElement('span');a.textContent=x.t;const b=document.createElement('span');b.textContent=x.v.split('.')[0];b.style.fontWeight=700;b.style.color=x.lv==='bad'?'var(--bad)':x.lv==='warn'?'var(--warn)':'var(--ok)';b.style.whiteSpace='nowrap';d.append(a,b);$('hist').appendChild(d)})}
 /* Leitura de print: o texto da imagem é lido no próprio aparelho (a imagem não é enviada). A biblioteca só é baixada quando alguém usa uma imagem. */
-let tessP=null;
-function loadTess(){return tessP||(tessP=new Promise((ok,err)=>{const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js';s.onload=()=>ok(window.Tesseract);s.onerror=()=>{tessP=null;err(new Error('load'))};document.head.appendChild(s)}))}
+let tessP=null,tessW=null,tessMsg=null;
+const TB=new URL('tess/',location.href).href;
+function loadTess(){return tessP||(tessP=new Promise((ok,err)=>{const s=document.createElement('script');s.src=TB+'tesseract.min.js';s.onload=()=>ok(window.Tesseract);s.onerror=()=>{tessP=null;err(new Error('script'))};document.head.appendChild(s)}))}
+function getWorker(){return tessW||(tessW=loadTess().then(T=>T.createWorker('por',1,{workerPath:TB+'worker.min.js',corePath:TB,langPath:TB,logger:m=>{if(tessMsg&&m.status==='recognizing text')tessMsg('Lendo a imagem… '+Math.round(m.progress*100)+'%')}})).catch(e=>{tessW=null;throw e}))}
+function shrink(file){return new Promise(res=>{try{const u=URL.createObjectURL(file),im=new Image();im.onload=()=>{URL.revokeObjectURL(u);const M=1800,k=Math.min(1,M/Math.max(im.width,im.height));if(k===1)return res(file);const c=document.createElement('canvas');c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);c.toBlob(b=>res(b||file),'image/png')};im.onerror=()=>{URL.revokeObjectURL(u);res(file)};im.src=u}catch(e){res(file)}})}
 async function readImage(file){
- $('hint').textContent='Lendo a imagem… a primeira vez demora um pouco.';
- try{const T=window.Tesseract||await loadTess();
-  const r=await T.recognize(file,'por',{logger:m=>{if(m.status==='recognizing text')$('hint').textContent='Lendo a imagem… '+Math.round(m.progress*100)+'%'}});
+ const say=t=>{$('hint').textContent=t};tessMsg=say;
+ say('Lendo a imagem… a primeira vez demora um pouco.');
+ let step='carregar o leitor';
+ try{const w=await getWorker();step='ler o texto';
+  const r=await w.recognize(await shrink(file));
   const t=((r.data&&r.data.text)||'').replace(/(-|\/)[ \t]*\n[ \t]*/g,'$1').replace(/[ \t]+\n/g,'\n').trim();
-  if(t.length<6){$('hint').textContent='Não consegui ler o texto desse print. Tente um print mais nítido ou cole o link.';return}
-  $('inp').value=t;$('hint').textContent='';run();
- }catch(e){$('hint').textContent='Não consegui abrir o leitor de imagem agora. Confira a internet ou cole o texto.'}}
+  if(t.length<6){say('Não consegui ler o texto desse print. Tente um print mais nítido ou cole o link.');return}
+  $('inp').value=t;say('');run();
+ }catch(e){tessW=null;say('Não consegui '+step+' agora ('+String((e&&e.message)||e).slice(0,60)+'). Tente de novo ou cole o texto.')}}
 async function pasteGo(){
  try{
   if(navigator.clipboard.read){const items=await navigator.clipboard.read();
